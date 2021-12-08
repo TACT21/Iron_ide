@@ -21,15 +21,16 @@ import clr
 clr.AddReference('MyApp')
 def greetings(name):
     print('test')
-    a = Utility.Readline_alt('test>>')
+    a = scope.Readline_alt('test')
     print(a)
     return 'Hello ' + name.title() + '!'
 ";
             var eng = Python.CreateEngine();
             var scope = eng.CreateScope();
-            eng.Execute(sauce, scope);
             var u = new Utility();
-            dynamic greetings = scope.GetVariable("greetings", u);
+            scope.SetVariable("scope", u);
+            eng.Execute(sauce, scope);
+            dynamic greetings = scope.GetVariable("greetings");
             var result = greetings("world");
             Console.WriteLine("end");
             Console.WriteLine(result);
@@ -47,13 +48,4 @@ def greetings(name):
         }
     }
 
-    public class Log
-    {
-        public int testInt = 0;
-
-        public void debugLog()
-        {
-            Debug.Log("Debug Log " + testInt);
-        }
-    }
 }
