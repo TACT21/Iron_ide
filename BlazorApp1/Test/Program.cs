@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using IronPython.Hosting;
 using System.Runtime.InteropServices;
-using Forcibly;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -20,8 +19,7 @@ def greetings(name):
     print(a)
     return 'Hello ' + name.title() + '!'
 ";
-            var u = new Forcibly.Class1();
-            u.func = Utility.Readline_alt;
+            var u = new Utility();
             var eng = Python.CreateEngine();
             var scope = eng.CreateScope();
             scope.SetVariable("scope", u);
@@ -34,9 +32,9 @@ def greetings(name):
 
     }
 
-    public static class Utility
+    public class Utility
     {
-        public static string Readline_alt(string mess)
+        public static string? Readline_alt(string mess)
         {
             Console.Write(mess + " >>>");
             return Console.ReadLine();

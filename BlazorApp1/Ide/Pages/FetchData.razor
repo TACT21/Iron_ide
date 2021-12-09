@@ -1,0 +1,59 @@
+﻿@page "/fetchdata"
+@using Syncfusion.Blazor.RichTextEditor
+@using Syncfusion.Blazor.Buttons
+@inject IJSRuntime JSRuntime;
+@inherits Seth
+
+<PageTitle>Weather forecast</PageTitle>
+
+<!---->
+<div class="session">
+    <div class="control">
+        <SfButton @onclick ="@Start">New_file</SfButton>
+        <InputFile class="input" id="_usr_input"></InputFile><label for="_usr_input" CssClass="e-flat">Load .py file</label>
+    </div>
+
+
+    <SfRichTextEditor  @bind-Value="@inline" @onchange="@Onchenge" @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
+        <RichTextEditorToolbarSettings Items="@ToolsForInline" />
+    </SfRichTextEditor>
+    @inline
+    <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">play</SfButton>
+    @molding
+</div>
+
+<style>
+       .input{
+           display:none;
+       }
+</style>
+
+@code {
+    SfRichTextEditor rteObj;
+    private List<ToolbarItemModel> ToolsForInline = new List<ToolbarItemModel>()
+    {
+        new ToolbarItemModel() { Command = ToolbarCommand.Undo },
+        new ToolbarItemModel() { Command = ToolbarCommand.Redo}
+    };
+    public void Start()
+    {
+        rteObj.EnableTabKey = true;
+        rteObj.AutoSaveOnIdle = true;
+        rteObj.EnablePersistence = true;
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Start();
+            inline = await JSRuntime.InvokeAsync<string>("get_content_seth");
+        }
+    }
+
+    public async void Onchenge()
+    {        
+        Console.Write("call set_content_seth");
+        await JSRuntime.InvokeVoidAsync("set_content_seth", rteObj);
+    }
+}
