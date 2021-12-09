@@ -11,4 +11,10 @@
     <PackageReference Include="IronPython" Version="3.4.0-alpha1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Forcibly">
+      <HintPath>..\Forcibly\bin\Debug\net6.0\Forcibly.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

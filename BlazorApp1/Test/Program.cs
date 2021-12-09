@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using IronPython.Hosting;
+using System.Runtime.InteropServices;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -12,8 +13,8 @@ namespace MyApp // Note: actual namespace depends on the project name.
             Console.Write(mess + " >>>");
             return Console.ReadLine();
         }
-        public static Func<string, string> func = Readline_alt;
-        dynamic dynamic_func = func;
+        [assembly:DllImport(@"../Forcibly/bin/Debug/net6.0/Forcibly.Dll")]
+        extern Func<string, string> func = Readline_alt;
         public static void Main(string[] args)
         {
             string sauce = @"
@@ -28,6 +29,8 @@ def greetings(name):
             var eng = Python.CreateEngine();
             var scope = eng.CreateScope();
             var u = new Utility();
+
+            extern 
             scope.SetVariable("scope", u);
             eng.Execute(sauce, scope);
             dynamic greetings = scope.GetVariable("greetings");
