@@ -12,5 +12,13 @@ namespace Ide.scripts
         {
             molding = Regex.Replace(inline, "<[^>]*?>", "");
         }
+        public void New()
+        {
+            if(inline == string.Empty)
+            {
+                
+            }
+            
+        }
     }
 }
