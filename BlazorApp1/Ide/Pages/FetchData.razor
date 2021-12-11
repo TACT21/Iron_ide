@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @using Syncfusion.Blazor.RichTextEditor
 @using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
 @inject IJSRuntime JSRuntime;
 @inherits Coder
 
@@ -13,15 +14,19 @@
         <InputFile class="input" id="_usr_input"></InputFile><label for="_usr_input" CssClass="e-flat">Load .py file</label>
     </div>
 
-
-    <SfRichTextEditor  @bind-Value="@inline" @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
+    @inline
+    <SfRichTextEditor  @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
         <RichTextEditorToolbarSettings Items="@ToolsForInline" />
     </SfRichTextEditor>
-    @inline
-    <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">play</SfButton>
+    <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">play</SfButton><br/>
+    @if (debug)
+    {
+        @molding
+    }
     <div class="container">
-        <p class="bottom-left">@molding</p>
+        <p class="bottom-left">@((MarkupString)console)</p>
     </div>
+    <div style="display:flex">@q<SfMaskedTextBox @ref="@maskedTextBox"></SfMaskedTextBox><SfButton CssClass="e-flat" @onclick ="@Input" IconCss="e-icons e-play">Submit</SfButton></div>
 </div>
 
 <style>
@@ -29,10 +34,11 @@
            display:none;
        }
        .container {
-	position: relative;
-	width: 100%;
-	height: 200px;
-	background: #000;
+	    position: relative;
+	    width: 100%;
+	    height: 30vh;
+        overflow-y:scroll;
+	    background: #000;
 }
 
 .container p {
@@ -49,25 +55,5 @@
 </style>
 
 @code {
-    SfRichTextEditor rteObj;
-    private List<ToolbarItemModel> ToolsForInline = new List<ToolbarItemModel>()
-    {
-        new ToolbarItemModel() { Command = ToolbarCommand.Undo },
-        new ToolbarItemModel() { Command = ToolbarCommand.Redo}
-    };
-    public void Start()
-    {
-        rteObj.EnableTabKey = true;
-        rteObj.AutoSaveOnIdle = true;
-        rteObj.EnablePersistence = true;
-    }
-
-    protected override async void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Start();
-        }
-    }
 
 }
