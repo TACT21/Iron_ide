@@ -2,6 +2,19 @@ https://qiita.com/masashi_sampe/items/bd9f9a74a054934277c1
 https://qiita.com/smdask/items/2dfc40a7a60f65dcdb6c
 https://qiita.com/watame/items/38318dd92a19427874fd
 https://github.com/arivera12/BlazorDownloadFile/tree/master/BlazorDownloadFile.Demo
-https://github.com/microsoft/monaco-editor/blob/main/samples/browser-esm-webpack-small/index.js
 
-Monaco エディタとBasic language の import を Blazor manaco で実現する方法の模索
+現在の課題、pythonに関数を因数として渡す。
+
+                console += "<div class='bar'><p>"+DateTime.Now+"</p></div>" ;
+                var u = new Utility();
+                var eng = Python.CreateEngine();
+                var scope = eng.CreateScope();
+                scope.SetVariable("Utility", u);
+                eng.Execute(molding, scope);
+
+                var runtime = Python.CreateRuntime();
+                runtime.IO.SetInput(new MemoryStream(), Encoding.Default);
+                var eng = Python.GetEngine(runtime);
+                var scope = eng.CreateScope();
+                scope.SetVariable("Utility", u);
+                eng.Execute(molding, scope);
