@@ -17,7 +17,7 @@ namespace Ferrum
         public string input = string.Empty;
         public string q = string.Empty;
         public bool debug = false;
-        public SfRichTextEditor rteObj;
+        //public SfRichTextEditor rteObj;
         public string inline = string.Empty;
         public SfMaskedTextBox maskedTextBox;
         public List<ToolbarItemModel> ToolsForInline = new List<ToolbarItemModel>()
@@ -25,13 +25,13 @@ namespace Ferrum
             new ToolbarItemModel() { Command = ToolbarCommand.Undo },
             new ToolbarItemModel() { Command = ToolbarCommand.Redo}
         };
-        public void Start()
+        /*public void Start()
         {
             rteObj.EnableTabKey = true;
             rteObj.AutoSaveOnIdle = true;
             rteObj.EnablePersistence = true;
             rteObj.Height = "50vh";
-        }
+        }*/
 
         public void Input()
         {
@@ -61,12 +61,12 @@ namespace Ferrum
         {
             if (firstRender)
             {
-                Start();
+                //Start();
             }
         }
         public void Mold()
         {
-            molding = Converter(rteObj.Value);
+            //molding = Converter(rteObj.Value);
             Console.WriteLine(molding);
             try
             {
@@ -92,13 +92,13 @@ namespace Ferrum
                 }
             }
         }
-        public void New()
+        /*public void New()
         {
             if (rteObj.Value == string.Empty)
             {
 
             }
-        }
+        }*/
 
 
         public async Task<string> Readline_core(string m)
@@ -119,7 +119,7 @@ namespace Ferrum
         }
         public async void Save()
         {
-            await BlazorDownloadFileService.DownloadFileFromText("*.py", "# coding: utf-8\r\n\r\n" + rteObj.Value, System.Text.Encoding.UTF8, 3000, "application/octet-stream") ;
+            //await BlazorDownloadFileService.DownloadFileFromText("*.py", "# coding: utf-8\r\n\r\n" + rteObj.Value, System.Text.Encoding.UTF8, 3000, "application/octet-stream") ;
         }
 
         public void Print_alt(string m)

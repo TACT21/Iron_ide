@@ -10,14 +10,13 @@
 <!---->
 <div class="session">
     <div class="control">
-        <SfButton @onclick ="@New">New_file</SfButton>
+        <SfButton >New_file</SfButton>
         <InputFile class="input" id="_usr_input"></InputFile><label for="_usr_input" CssClass="e-flat">Load .py file</label>
     </div>
-
+    <!--ConstructionOptions="EditorConstructionOptions"-->
+     <MonacoEditor Id="any-id-string"  />
     @inline
-    <SfRichTextEditor  @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
-        <RichTextEditorToolbarSettings Items="@ToolsForInline" />
-    </SfRichTextEditor>
+    <MonacoEditor Id="any-id-string" />
     <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">play</SfButton><br/>
     @if (debug)
     {
@@ -55,5 +54,26 @@
 </style>
 
 @code {
-
+    /*protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "valuepool.js");
+            await module.InvokeVoidAsync("Wake_up_monaco");
+        }
+    }*/
+    /// <summary>
+    /// The function to Initialization Monaco editor
+    /// </summary>
+    /*private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+        {
+	        return new StandaloneEditorConstructionOptions
+	        {
+		        AutomaticLayout = true,
+		        Language = "python",
+		        Value = "function xyz() {\n" +
+				        "   console.log(\"Hello world!\");\n" +
+				        "}"
+	        };
+        }*/
 }
