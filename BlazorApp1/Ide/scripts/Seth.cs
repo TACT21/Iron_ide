@@ -33,12 +33,6 @@ namespace Ferrum
             rteObj.Height = "50vh";
         }
 
-        public void Input()
-        {
-            input = maskedTextBox.Value;
-            Console.WriteLine(maskedTextBox.Value);
-        }
-
         public string Converter(string raw)
         {
             Console.WriteLine(raw);
@@ -62,6 +56,8 @@ namespace Ferrum
             if (firstRender)
             {
                 Start();
+                Utility_port.oncheng_console = Output;
+                Utility_port.oncheng_input = Question;
             }
         }
         public void Mold()
@@ -99,48 +95,97 @@ namespace Ferrum
 
             }
         }
-
-
-        public async Task<string> Readline_core(string m)
-        {
-            q = m;
-            while (true)
-            {
-                if (input != string.Empty)
-                {
-                    Console.WriteLine(input);
-                    break;
-                }
-                Task.Delay(1000);
-            }
-            var result = input;
-            input = string.Empty;
-            return result;
-        }
+        /// <summary>
+        /// Saving Context which contein rteObj.
+        /// </summary>
         public async void Save()
         {
             await BlazorDownloadFileService.DownloadFileFromText("*.py", "# coding: utf-8\r\n\r\n" + rteObj.Value, System.Text.Encoding.UTF8, 3000, "application/octet-stream") ;
         }
-
-        public void Print_alt(string m)
+        /// <summary>
+        /// Set qyestion field
+        /// </summary>
+        /// <param name="m">question such as "input>>"</param>
+        void Question(string m)
         {
             Console.WriteLine(m);
-            console = console+ "\r\n"+m;
+            q = m;
+        }
+        /// <summary>
+        /// Get input
+        /// </summary>
+        public void Input()
+        {
+            Utility_port.import_temp = maskedTextBox.Value;
+        }
+        /// <summary>
+        /// Output console
+        /// </summary>
+        /// <param name="m">output text</param>
+        void Output(string m)
+        {
+            Console.WriteLine("callmain");
+            console = console+ "\r\n" + m;
+        }
+
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    ///<param name="oncheng_console">Console_messege</param>
+    ///<param name="oncheng_input">Console_messege</param>
+    ///<param name="console_temp">Console_messege</param>
+    ///<param name="import_temp">Console_messege</param>
+    public static class Utility_port
+    {
+        public static Action<string> oncheng_console;
+        public static Action<string> oncheng_input;
+        public static string import_temp = string.Empty;
+        /// <summary>
+        /// Input function
+        /// </summary>
+        /// <param name="m">Console_messege</param>
+        /// <returns></returns>
+        private static async Task<string> Readline_core(object m)
+        {
+            oncheng_input(m.ToString());
+            while (true)
+            {
+                if (import_temp != string.Empty)
+                {
+                    Console.WriteLine(import_temp);
+                    break;
+                }
+                Task.Delay(1000);
+            }
+            var result = import_temp;
+            import_temp = string.Empty;
+            return result;
+        }
+
+        public static async Task<string> Read(object m)
+        {
+            return await Readline_core(m);
+        }
+        public static void Print_alt(object m)
+        {
+            Console.WriteLine(m);
+            oncheng_console(m.ToString());
         }
     }
+
 
     public class Utility
     {
         public static string? Input(string mess)
         {
             Console.WriteLine (mess);
-            var a = new Coder();
-            return a.Readline_core(mess).Result;
+            return Utility_port.Read(mess).Result;
         }
-        public static void Print(string mess)
+        public static void Print(object mess)
         {
-            var a = new Coder();
-            a.Print_alt(mess);
+            Console.WriteLine(mess);
+            Utility_port.Print_alt(mess);
         }
     }
 }
