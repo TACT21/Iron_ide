@@ -11,16 +11,23 @@ namespace MyApp // Note: actual namespace depends on the project name.
         public static void Main(string[] args)
         {
             string sauce = @"
-print('test')
-a = scope.Readline_alt('test')
-print(a)
+import clr
+clr.AddReference('MyApp')
+def greetings(name):
+    print('test')
+    a = scope.Run_func('test')
+    print(a)
+    return 'Hello ' + name.title() + '!'
 ";
             var u = new Utility();
             var eng = Python.CreateEngine();
             var scope = eng.CreateScope();
             scope.SetVariable("scope", u);
             eng.Execute(sauce, scope);
+            dynamic greetings = scope.GetVariable("greetings");
+            var result = greetings("world");
             Console.WriteLine("end");
+            Console.WriteLine(result);
         }
 
     }
