@@ -10,23 +10,24 @@
 <!---->
 <div class="session">
     <div class="control">
-        <SfButton @onclick ="@New">New_file</SfButton>
-        <InputFile class="input" id="_usr_input"></InputFile><label for="_usr_input" CssClass="e-flat">Load .py file</label>
+        <SfButton @onclick ="@New">新しいファイル</SfButton>
+        <InputFile class="input" id="_usr_input"></InputFile><label for="_usr_input" CssClass="e-flat">python ファイルを読み込む</label>
+        <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">実行</SfButton>
+        <SfCheckBox Label="デバッグモード" @bind-Checked="@debug"></SfCheckBox>
     </div>
-
-    @inline
     <SfRichTextEditor  @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
         <RichTextEditorToolbarSettings Items="@ToolsForInline" />
     </SfRichTextEditor>
-    <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">play</SfButton><br/>
-    @if (debug)
-    {
-        @molding
-    }
     <div class="container">
         <p class="bottom-left">@((MarkupString)console)</p>
     </div>
     <div style="display:flex">@q<SfMaskedTextBox @ref="@maskedTextBox"></SfMaskedTextBox><SfButton CssClass="e-flat" @onclick ="@Input" IconCss="e-icons e-play">Submit</SfButton></div>
+    @if (debug)
+    {
+        @inline
+        <br/>
+        @molding  
+    }
 </div>
 
 <style>
@@ -37,7 +38,7 @@
 	    position: relative;
 	    width: 100%;
 	    height: 30vh;
-        overflow-y:scroll;
+        margin:0;
 	    background: #000;
 }
 
@@ -51,6 +52,9 @@
 	position: absolute;
 	bottom: 0;
 	left: 0;
+    max-height:100%;
+    width:100%;
+    overflow-y:scroll;
 }
 </style>
 

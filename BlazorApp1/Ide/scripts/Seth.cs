@@ -20,6 +20,9 @@ namespace Ferrum
         public SfRichTextEditor rteObj;
         public string inline = string.Empty;
         public SfMaskedTextBox maskedTextBox;
+        public string path = string.Empty;
+        public bool isSave = false;
+        public bool isRun = false;
         public List<ToolbarItemModel> ToolsForInline = new List<ToolbarItemModel>()
         {
             new ToolbarItemModel() { Command = ToolbarCommand.Undo },
@@ -30,13 +33,13 @@ namespace Ferrum
             rteObj.EnableTabKey = true;
             rteObj.AutoSaveOnIdle = true;
             rteObj.EnablePersistence = true;
-            rteObj.Height = "50vh";
+            rteObj.Height = "40vh";
         }
 
         public string Converter(string raw)
         {
             Console.WriteLine(raw);
-            string s = raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
+            string s = raw.Replace(" &nbsp;&nbsp;&nbsp;&nbsp;", "\t");
             s = WebUtility.HtmlDecode(s);
             s = s.Replace("</p>", "\r\n");
             s = Regex.Replace(s, "<[^>]*?>", "");
@@ -66,7 +69,7 @@ namespace Ferrum
             Console.WriteLine(molding);
             try
             {
-                console += "<div class='bar'><p>"+DateTime.Now+"</p></div>" ;
+                console += "<div class='bar'><p>" + DateTime.Now + "</p></div>";
                 var u = new Utility();
                 var runtime = Python.CreateRuntime();
                 runtime.IO.SetInput(new MemoryStream(), Encoding.Default);
@@ -74,7 +77,7 @@ namespace Ferrum
                 var scope = eng.CreateScope();
                 scope.SetVariable("Utility", u);
                 var source = eng.CreateScriptSourceFromString(molding);
-                eng.Execute(molding,scope);
+                eng.Execute(molding, scope);
             }
             catch (Exception ex)
             {
@@ -146,9 +149,16 @@ namespace Ferrum
         /// </summary>
         /// <param name="m">Console_messege</param>
         /// <returns></returns>
-        private static async Task<string> Readline_core(object m)
+        private static async Task<string> Readline_core(object m = null)
         {
-            oncheng_input(m.ToString());
+            if (m != null || m != string.Empty)
+            {
+                oncheng_input(m.ToString());
+            }
+            else
+            {
+                oncheng_input("何かを入力してください");
+            }
             while (true)
             {
                 if (import_temp != string.Empty)
@@ -156,7 +166,7 @@ namespace Ferrum
                     Console.WriteLine(import_temp);
                     break;
                 }
-                Task.Delay(1000);
+                await Task.Delay(1000);
             }
             var result = import_temp;
             import_temp = string.Empty;
@@ -167,22 +177,29 @@ namespace Ferrum
         {
             return await Readline_core(m);
         }
-        public static void Print_alt(object m)
+        public static void Print_alt(object m = null)
         {
             Console.WriteLine(m);
-            oncheng_console(m.ToString());
+            if(m != null || m != string.Empty)
+            {
+                oncheng_console(m.ToString());
+            }
+            else
+            {
+                oncheng_console("Designated value is null");
+            }
         }
     }
 
 
     public class Utility
     {
-        public static string? Input(string mess)
+        public static string? Input(string mess = null)
         {
             Console.WriteLine (mess);
             return Utility_port.Read(mess).Result;
         }
-        public static void Print(object mess)
+        public static void Print(object mess = null)
         {
             Console.WriteLine(mess);
             Utility_port.Print_alt(mess);
