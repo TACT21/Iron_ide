@@ -6,6 +6,7 @@ using System.Text;
 using BlazorDownloadFile;
 using Syncfusion.Blazor.Inputs;
 using System.Net;
+using Microsoft.AspNetCore.Blazor.Hosting;
 
 namespace Ferrum
 {
@@ -20,6 +21,7 @@ namespace Ferrum
         public SfRichTextEditor rteObj;
         public string inline = string.Empty;
         public SfMaskedTextBox maskedTextBox;
+        public bool isTop = true;
         public List<ToolbarItemModel> ToolsForInline = new List<ToolbarItemModel>()
         {
             new ToolbarItemModel() { Command = ToolbarCommand.Undo },
@@ -31,11 +33,12 @@ namespace Ferrum
             rteObj.AutoSaveOnIdle = true;
             rteObj.EnablePersistence = true;
             rteObj.Height = "50vh";
+            rteObj.Value = "<p>print('test')</p><p>a = input('Test>>')</p><p>print(a)</p>";
         }
 
         public string Converter(string raw)
         {
-            Console.WriteLine(raw);
+            Console.WriteLine(raw+"@converter");
             string s = raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
             s = WebUtility.HtmlDecode(s);
             s = s.Replace("</p>", "\r\n");
@@ -62,7 +65,15 @@ namespace Ferrum
         }
         public void Mold()
         {
-            molding = Converter(rteObj.Value);
+            if (isTop)
+            {
+                molding = "import System.Threading.Tasks\r\n" + Converter(rteObj.Value);
+            }
+            else
+            {
+                molding = Converter(rteObj.Value);
+            }
+            
             Console.WriteLine(molding);
             try
             {
@@ -156,7 +167,10 @@ namespace Ferrum
                     Console.WriteLine(import_temp);
                     break;
                 }
-                Task.Delay(1000);
+                InvokeAsync(() =>
+                {
+                    
+                });
             }
             var result = import_temp;
             import_temp = string.Empty;
