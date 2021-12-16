@@ -4,6 +4,7 @@
 @using Syncfusion.Blazor.Inputs
 @inject IJSRuntime JSRuntime;
 @inherits Coder
+@implements IDisposable
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -58,8 +59,4 @@
 </style>
 
 @code {
-        InvokeAsync((Func<Task>) =>
-                {
-                    return Task.Delay(1000);
-                });
 }

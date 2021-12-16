@@ -6,7 +6,6 @@ using System.Text;
 using BlazorDownloadFile;
 using Syncfusion.Blazor.Inputs;
 using System.Net;
-using Microsoft.AspNetCore.Blazor.Hosting;
 
 namespace Ferrum
 {
@@ -176,11 +175,7 @@ namespace Ferrum
                     Console.WriteLine(import_temp);
                     break;
                 }
-                InvokeAsync(() =>
-                {
-                    
-                });
-                await Task.Delay(1000);
+                await EventCallbackWorkItem.InvokeAsync(null);
             }
             var result = import_temp;
             import_temp = string.Empty;
@@ -203,6 +198,34 @@ namespace Ferrum
                 oncheng_console("Designated value is null");
             }
         }
+
+        private static int currentCount = 0;
+        private static string message = null;
+        private static CancellationTokenSource cts = new CancellationTokenSource();
+
+        public static async Task RunTask()
+        {
+            await Task.Run(async () =>
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    if (cts.Token.IsCancellationRequested)
+                    {
+                        Print_alt("Error!タスクがキャンセルされました。");
+                        break;
+                    }
+                    await Task.Delay(1000);
+                }
+            },
+            cts.Token);
+        }
+
+        public static void Cancel()
+        {
+            // バックグラウンドスレッドをキャンセルする
+            cts.Cancel();
+        }
+
     }
 
 
