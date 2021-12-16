@@ -12,11 +12,20 @@ namespace MyApp // Note: actual namespace depends on the project name.
         public static void Main(string[] args)
         {
             string sauce = @"
-import clr
-clr.AddReferenceByPartialName('System.Threading.Tasks')
 print('test')
 a = scope.Readline_alt('test')
 print(a)
+def Main():
+    i = int(1)
+    print(i)
+    yield i
+    print(i)
+    i += int(1)
+    yield
+    print(i)
+Main()
+Main()
+Main()
 ";
             var u = new Utility();
             var eng = Python.CreateEngine();
@@ -30,9 +39,8 @@ print(a)
 
     public class Utility
     {
-        public async  static Task<string> Readline_alt(string mess)
+        public static string Readline_alt(string mess)
         {
-            await Task.Delay(1000);
             Console.Write(mess + " >>>");
             return Console.ReadLine();
         }
