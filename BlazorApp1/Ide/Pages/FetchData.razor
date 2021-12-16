@@ -2,7 +2,7 @@
 @using Syncfusion.Blazor.RichTextEditor
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Inputs
-@inject IJSRuntime JSRuntime;
+@inject IJSRuntime jSRuntime;
 @inherits Coder
 
 <PageTitle>Weather forecast</PageTitle>
@@ -58,8 +58,23 @@
 </style>
 
 @code {
-    public async void Wait()
+    public async Task Wait()
     {
-        await JSRuntime.InvokeVoidAsync("sleep_alt");
+        Console.WriteLine("sleep call");
+        await jSRuntime.InvokeVoidAsync("sleep_alt");
     }
+    void Atstart()
+    {
+        Utility_port.Wait = Wait;
+    }
+    protected override async void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                Start();
+                Atstart();
+                Utility_port.oncheng_console = Output;
+                Utility_port.oncheng_input = Question;
+            }
+        }
 }

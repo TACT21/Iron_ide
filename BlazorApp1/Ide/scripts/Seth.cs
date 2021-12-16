@@ -8,6 +8,7 @@ using Syncfusion.Blazor.Inputs;
 using System.Net;
 using System.Collections;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 
 namespace Ferrum
@@ -47,6 +48,7 @@ namespace Ferrum
             s = WebUtility.HtmlDecode(s);
             s = s.Replace("</p>", "\r\n");
             s = Regex.Replace(s, "<[^>]*?>", "");
+            //TODO HOW TO Input "yield"
             s = s.Replace("input", "Utility.Input");
             s = s.Replace("print", "Utility.Print");
             var a = new byte[s.Length];
@@ -58,15 +60,7 @@ namespace Ferrum
             return Encoding.UTF8.GetString(a);
         }
 
-        protected override async void OnAfterRender(bool firstRender)
-        {
-            if (firstRender)
-            {
-                Start();
-                Utility_port.oncheng_console = Output;
-                Utility_port.oncheng_input = Question;
-            }
-        }
+
         public void Mold()
         {
             if (isTop)
@@ -121,7 +115,7 @@ namespace Ferrum
         /// Set qyestion field
         /// </summary>
         /// <param name="m">question such as "input>>"</param>
-        void Question(string m)
+        public void Question(string m)
         {
             Console.WriteLine(m);
             q = m;
@@ -137,12 +131,11 @@ namespace Ferrum
         /// Output console
         /// </summary>
         /// <param name="m">output text</param>
-        void Output(string m)
+        public void Output(string m)
         {
             Console.WriteLine("callmain");
             console = console+ "\r\n" + m;
         }
-
     }
     /// <summary>
     /// 
@@ -155,6 +148,7 @@ namespace Ferrum
     {
         public static Action<string> oncheng_console;
         public static Action<string> oncheng_input;
+        public static Func<Task> Wait;
         public static string import_temp = string.Empty;
         /// <summary>
         /// Input function
@@ -163,6 +157,7 @@ namespace Ferrum
         /// <returns></returns>
         private static async Task<string> Readline_core(object m = null)
         {
+            var forc = new Coder();
             oncheng_input(m.ToString());
             for (int i = 0; i < 10; i++)
             {
@@ -171,6 +166,7 @@ namespace Ferrum
                     Console.WriteLine(import_temp);
                     break;
                 }
+                await Wait();
             }
             var result = import_temp;
             import_temp = string.Empty;
@@ -209,26 +205,6 @@ namespace Ferrum
         }
     }
 
-    public class Forced
-    {
-        delegate string HeavyMethodDelegate();
-
-        public IEnumerator Start()
-        {
-            HeavyMethodDelegate worker = new HeavyMethodDelegate(HeavyMethod);
-            IAsyncResult ar = worker.BeginInvoke(null, null);
-            while (!ar.IsCompleted)
-            {
-                yield return null;
-            }
-        }
-
-        public string HeavyMethod()
-        {
-            Thread.Sleep(1000);
-            return "Complete";
-        }
-    }
 
 
     public class Utility
