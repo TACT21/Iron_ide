@@ -6,6 +6,9 @@ using System.Text;
 using BlazorDownloadFile;
 using Syncfusion.Blazor.Inputs;
 using System.Net;
+using System.Collections;
+using Microsoft.AspNetCore.Components.Web;
+
 
 namespace Ferrum
 {
@@ -160,28 +163,34 @@ namespace Ferrum
         /// <returns></returns>
         private static async Task<string> Readline_core(object m = null)
         {
-            if (m != null || m != string.Empty)
-            {
-                oncheng_input(m.ToString());
-            }
-            else
-            {
-                oncheng_input("何かを入力してください");
-            }
-            while (true)
+            oncheng_input(m.ToString());
+            for (int i = 0; i < 10; i++)
             {
                 if (import_temp != string.Empty)
                 {
                     Console.WriteLine(import_temp);
                     break;
                 }
-                await EventCallbackWorkItem.InvokeAsync(null);
             }
             var result = import_temp;
             import_temp = string.Empty;
             return result;
         }
-
+        private static async Task<object> Readline_core_null() 
+        { 
+            oncheng_input("何かを入力してください");
+            for (int i = 0; i < 10; i++)
+            {
+                if (import_temp != string.Empty)
+                {
+                    Console.WriteLine(import_temp);
+                    break;
+                }
+            }
+            var result = import_temp;
+            import_temp = string.Empty;
+            return result;
+        }
         public static async Task<string> Read(object m)
         {
             return await Readline_core(m);
@@ -198,34 +207,27 @@ namespace Ferrum
                 oncheng_console("Designated value is null");
             }
         }
+    }
 
-        private static int currentCount = 0;
-        private static string message = null;
-        private static CancellationTokenSource cts = new CancellationTokenSource();
+    public class Forced
+    {
+        delegate string HeavyMethodDelegate();
 
-        public static async Task RunTask()
+        public IEnumerator Start()
         {
-            await Task.Run(async () =>
+            HeavyMethodDelegate worker = new HeavyMethodDelegate(HeavyMethod);
+            IAsyncResult ar = worker.BeginInvoke(null, null);
+            while (!ar.IsCompleted)
             {
-                for (int i = 0; i < 10; i++)
-                {
-                    if (cts.Token.IsCancellationRequested)
-                    {
-                        Print_alt("Error!タスクがキャンセルされました。");
-                        break;
-                    }
-                    await Task.Delay(1000);
-                }
-            },
-            cts.Token);
+                yield return null;
+            }
         }
 
-        public static void Cancel()
+        public string HeavyMethod()
         {
-            // バックグラウンドスレッドをキャンセルする
-            cts.Cancel();
+            Thread.Sleep(1000);
+            return "Complete";
         }
-
     }
 
 

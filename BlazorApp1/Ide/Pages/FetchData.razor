@@ -4,7 +4,6 @@
 @using Syncfusion.Blazor.Inputs
 @inject IJSRuntime JSRuntime;
 @inherits Coder
-@implements IDisposable
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -59,4 +58,8 @@
 </style>
 
 @code {
+    public async void Wait()
+    {
+        await JSRuntime.InvokeVoidAsync("sleep_alt");
+    }
 }

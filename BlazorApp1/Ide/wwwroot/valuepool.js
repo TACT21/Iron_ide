@@ -1,1 +1,1 @@
-﻿
+﻿const sleep_alt = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
