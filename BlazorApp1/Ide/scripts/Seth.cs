@@ -155,7 +155,7 @@ namespace Ferrum
         /// </summary>
         /// <param name="m">Console_messege</param>
         /// <returns></returns>
-        private static async Task<string> Readline_core(object m = null)
+        public static async Task<string> Readline_core(object m = null)
         {
             var forc = new Coder();
             oncheng_input(m.ToString());
@@ -166,7 +166,8 @@ namespace Ferrum
                     Console.WriteLine(import_temp);
                     break;
                 }
-                await Wait();
+                Console.WriteLine("Wait");
+                await Task.Run(() => Task.Delay(1000));
             }
             var result = import_temp;
             import_temp = string.Empty;
@@ -186,10 +187,6 @@ namespace Ferrum
             var result = import_temp;
             import_temp = string.Empty;
             return result;
-        }
-        public static async Task<string> Read(object m)
-        {
-            return await Readline_core(m);
         }
         public static void Print_alt(object m = null)
         {
@@ -212,7 +209,7 @@ namespace Ferrum
         public static string? Input(string mess = null)
         {
             Console.WriteLine (mess);
-            return Utility_port.Read(mess).Result;
+            return Utility_port.Readline_core(mess).Result;
         }
         public static void Print(object mess = null)
         {

@@ -1,18 +1,22 @@
 ﻿const sleep = (sec) => {
     return new Promise((resolve, reject) => {
-        setTimeout(resolve, sec * 1000);
+        setTimeout(resolve, sec);
         //setTimeout(() => {reject(new Error("エラー！"))}, sec*1000);
     });
 };
 
-async function sleep_alt() {
+const countUp = () => {
+    console.log("Waiting..");
+}
+
+async function sleep_alt(e) {
     console.log("Wait");
-    try {
-        await sleep(1); // ここで10秒間止まります
-
-        // ここに目的の処理を書きます。
-
-    } catch (err) {
-        console.error(err);
+    a = ""
+    while (true) {
+        setTimeout(countUp, sec);
+        if (e.value != "") {
+            a = e
+        }
     }
+    return a
 }

@@ -15,17 +15,6 @@ namespace MyApp // Note: actual namespace depends on the project name.
 print('test')
 a = scope.Readline_alt('test')
 print(a)
-def Main():
-    i = int(1)
-    print(i)
-    yield i
-    print(i)
-    i += int(1)
-    yield
-    print(i)
-Main()
-Main()
-Main()
 ";
             var u = new Utility();
             var eng = Python.CreateEngine();
@@ -42,7 +31,17 @@ Main()
         public static string Readline_alt(string mess)
         {
             Console.Write(mess + " >>>");
-            return Console.ReadLine();
+            return Temp.Read().Result;
+        }
+    }
+    public static class Temp
+    {
+        public static async Task<string> Read()
+        {
+            Console.WriteLine("console");
+            return await Task.Run(() => {
+                return Console.ReadLine();
+            });
         }
     }
 
