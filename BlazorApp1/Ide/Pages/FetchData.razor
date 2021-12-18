@@ -1,0 +1,79 @@
+﻿@page "/fetchdata"
+@using Syncfusion.Blazor.RichTextEditor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@inject IJSRuntime jSRuntime;
+@inherits Coder
+
+<PageTitle>Weather forecast</PageTitle>
+
+<!---->
+<div class="session">
+    <div class="control">
+        <SfButton @onclick ="@New">新しいファイル</SfButton>
+        <InputFile class="input" id="_usr_input"></InputFile><label for="_usr_input" CssClass="e-flat">python ファイルを読み込む</label>
+        <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">実行</SfButton>
+        <SfCheckBox Label="デバッグモード" @bind-Checked="@debug"></SfCheckBox>
+        <SfCheckBox Label="実験的な要素" @bind-Checked="@isTop"></SfCheckBox>
+    </div>
+    <SfRichTextEditor  @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
+        <RichTextEditorToolbarSettings Items="@ToolsForInline" />
+    </SfRichTextEditor>
+    <div class="container">
+        <p class="bottom-left">@((MarkupString)console)</p>
+    </div>
+    <div style="display:flex">@q<SfMaskedTextBox @ref="@maskedTextBox"></SfMaskedTextBox><SfButton CssClass="e-flat" @onclick ="@Input" IconCss="e-icons e-play">Submit</SfButton></div>
+    @if (debug)
+    {
+        @inline
+        <br/>
+        @molding  
+    }
+</div>
+
+<style>
+       .input{
+           display:none;
+       }
+       .container {
+	    position: relative;
+	    width: 100%;
+	    height: 30vh;
+        margin:0;
+	    background: #000;
+}
+.container p {
+	color: #FFF;
+	padding: 0 8px;
+	margin: 0;
+}
+.bottom-left {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+    max-height:100%;
+    width:100%;
+    overflow-y:scroll;
+}
+</style>
+
+@code {
+    public async Task Wait()
+    {
+        Console.WriteLine("sleep call");
+    }
+    void Atstart()
+    {
+        Utility_port.Wait = Wait;
+    }
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Start();
+            Atstart();
+            Utility_port.oncheng_console = Output;
+            Utility_port.oncheng_input = Question;
+        }
+    }
+}
