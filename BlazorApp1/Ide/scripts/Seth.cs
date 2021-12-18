@@ -26,10 +26,10 @@ namespace Ferrum
         public SfRichTextEditor rteObj;
         public string inline = string.Empty;
         public SfMaskedTextBox maskedTextBox;
-        public bool isTop = true;
         public string path = string.Empty;
         public bool isSave = false;
         public bool isRun = false;
+        public string output = string.Empty;
         public List<ToolbarItemModel> ToolsForInline = new List<ToolbarItemModel>()
         {
             new ToolbarItemModel() { Command = ToolbarCommand.Undo },
@@ -46,12 +46,32 @@ namespace Ferrum
         public string Converter(string raw)
         {
             Console.WriteLine(raw+"@converter");
-            string s = raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
+            string s = "from time import sleep\r\n"+ raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
             s = WebUtility.HtmlDecode(s);
             s = s.Replace("</p>", "\r\n");
             s = Regex.Replace(s, "<[^>]*?>", "");
+            output = s;
             //TODO HOW TO Input "yield"
-            s = s.Replace("input", "Utility.Input");
+            MatchCollection matches = Regex.Matches(s, ".+?input\x28.+?\x29.+?");//Input functionの抽出
+            foreach (Match m in matches)
+            {
+                Match matche = Regex.Match(m.Value, "\x28.+?\x29");//input(...)を抜き出す。
+                Console.WriteLine("SOA");
+                Console.WriteLine(matche);
+                Console.WriteLine(m.Value);
+                Console.WriteLine(m.Value.Split(matche.Value));
+                Console.WriteLine("EOA");
+                var arry = m.Value.Split(matche.Value);
+                if(arry.Length > 0)
+                {
+                    s = s.Replace(m.Value, (char)95 + "input=Utility.Input(" + matche.Value + ")\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + (char)95 + "input.Result" + arry[1]);//input(...)らへんをᐁ変数で置き換えて…
+                }
+                else
+                {
+                    s = s.Replace(m.Value, (char)95 + "input=Utility.Input(" + matche.Value + ")\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + (char)95 + "input.Result");//input(...)らへんをᐁ変数で置き換えて…
+                }
+                
+            }
             s = s.Replace("print", "Utility.Print");
             var a = new byte[s.Length];
             for (int i = 0; i < s.Length; i++)
@@ -65,14 +85,7 @@ namespace Ferrum
 
         public void Mold()
         {
-            if (isTop)
-            {
-                molding = "import System.Threading.Tasks\r\n" + Converter(rteObj.Value);
-            }
-            else
-            {
-                molding = Converter(rteObj.Value);
-            }
+            molding = Converter(rteObj.Value);
             
             Console.WriteLine(molding);
             try
@@ -91,11 +104,11 @@ namespace Ferrum
             {
                 if (debug)
                 {
-                    console += "<div style='color: red'>" + ex.ToString() + "</div>";
+                    console += "<pre style='color: red'>" + ex.ToString() + "</pre>";
                 }
                 else
                 {
-                    console += "<div style='color: red'>" + ex.Message + "</div>";
+                    console += "<pre style='color: red'>" + ex.Message + "</pre>";
                 }
             }
         }
@@ -161,7 +174,7 @@ namespace Ferrum
         {
             var forc = new Coder();
             oncheng_input(m.ToString());
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 if (import_temp != string.Empty)
                 {
@@ -209,11 +222,16 @@ namespace Ferrum
 
     public class Utility
     {
-        public static string? Input(string mess = null)
+        public static async Task<string> Input(string mess = null)
         {
             Console.WriteLine (mess);
-            var a = await Utility_port.Readline_core(mess);
-            return a;
+            return await Task.Run(() => Utility_port.Readline_core(mess));
+        }
+
+        public static string Input_experimental(string mess)
+        {
+            Utility_port.Print_alt(mess);
+            return Console.ReadLine();
         }
         public static void Print(object mess = null)
         {
