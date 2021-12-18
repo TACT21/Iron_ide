@@ -18,5 +18,5 @@ async function sleep_alt(e) {
             a = e
         }
     }
-    return a
+    return "a"
 }

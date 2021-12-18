@@ -15,6 +15,8 @@ namespace Ferrum
 {
     public partial class Coder: ComponentBase
     {
+        [Inject]
+        private IJSRuntime jsRuntime { get; set; }
         [Inject] public IBlazorDownloadFileService BlazorDownloadFileService { get; set; }
         public string molding =string.Empty;
         public string console = string.Empty;
@@ -138,7 +140,7 @@ namespace Ferrum
         }
     }
     /// <summary>
-    /// 
+    ///  
     /// </summary>
     ///<param name="oncheng_console">Console_messege</param>
     ///<param name="oncheng_input">Console_messege</param>
@@ -190,6 +192,7 @@ namespace Ferrum
         }
         public static void Print_alt(object m = null)
         {
+            Console.WriteLine("Write!");
             Console.WriteLine(m);
             if(m != null || m != string.Empty)
             {
@@ -209,7 +212,8 @@ namespace Ferrum
         public static string? Input(string mess = null)
         {
             Console.WriteLine (mess);
-            return Utility_port.Readline_core(mess).Result;
+            var a = await Utility_port.Readline_core(mess);
+            return a;
         }
         public static void Print(object mess = null)
         {
