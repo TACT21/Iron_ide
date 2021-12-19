@@ -12,11 +12,17 @@ namespace MyApp // Note: actual namespace depends on the project name.
     {
         public static void Main(string[] args)
         {
-            Match matche = Regex.Match("a = input('a')", "[\(].+?[\)]");
+            Python_R();
+        }
+
+        static void Ex()
+        {
+            Console.WriteLine("calc");
+            Match matche = Regex.Match("a = input('a')", "\\u0028.*?\\u0029");
             Console.WriteLine(matche);
         }
 
-        void python()
+        static void Python_R()
         {
             string sauce = @"
 print('test')
@@ -27,7 +33,11 @@ print(a)
             var eng = Python.CreateEngine();
             var scope = eng.CreateScope();
             scope.SetVariable("scope", u);
+            ThreadPool.GetMaxThreads(out int workerThreads, out int portThreads);
+            Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
             eng.Execute(sauce, scope);
+            ThreadPool.GetMaxThreads(out workerThreads, out portThreads);
+            Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
             Console.WriteLine("end");
         }
     }

@@ -2,6 +2,7 @@
 @using Syncfusion.Blazor.RichTextEditor
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Inputs
+@using System.Threading
 @inject IJSRuntime jSRuntime;
 @inherits Coder
 
@@ -14,6 +15,11 @@
         <InputFile class="input" id="_usr_input"></InputFile><label for="_usr_input" CssClass="e-flat">python ファイルを読み込む</label>
         <SfButton CssClass="e-flat" @onclick ="@Mold" IconCss="e-icons e-play">実行</SfButton>
         <SfCheckBox Label="デバッグモード" @bind-Checked="@debug"></SfCheckBox>
+        @if (debug)
+        {
+            @workerThreads<a>/</a>
+            @portThreads
+        }
     </div>
     <SfRichTextEditor  @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
         <RichTextEditorToolbarSettings Items="@ToolsForInline" />
@@ -59,6 +65,8 @@
 </style>
 
 @code {
+    int workerThreads;
+    int portThreads;
     public async Task Wait()
     {
         Console.WriteLine("sleep call");
@@ -70,7 +78,10 @@
     protected override async void OnAfterRender(bool firstRender)
     {
         if (firstRender)
-        {
+        {    
+            ThreadPool.GetMaxThreads(out workerThreads, out portThreads);
+            ThreadPool.SetMaxThreads(2, 2);
+            ThreadPool.GetMaxThreads(out workerThreads, out portThreads);
             Start();
             Atstart();
             Utility_port.oncheng_console = Output;

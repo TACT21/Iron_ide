@@ -52,10 +52,10 @@ namespace Ferrum
             s = Regex.Replace(s, "<[^>]*?>", "");
             output = s;
             //TODO HOW TO Input "yield"
-            MatchCollection matches = Regex.Matches(s, ".+?input\x28.+?\x29.+?");//Input functionの抽出
+            MatchCollection matches = Regex.Matches(s, ".*?input\\u0028.*?\\u0029.*?");//Input functionの抽出
             foreach (Match m in matches)
             {
-                Match matche = Regex.Match(m.Value, "\x28.+?\x29");//input(...)を抜き出す。
+                Match matche = Regex.Match(m.Value, "\\u0028.*?\\u0029");//input(...)を抜き出す。
                 Console.WriteLine("SOA");
                 Console.WriteLine(matche);
                 Console.WriteLine(m.Value);
@@ -64,11 +64,11 @@ namespace Ferrum
                 var arry = m.Value.Split(matche.Value);
                 if(arry.Length > 0)
                 {
-                    s = s.Replace(m.Value, (char)95 + "input=Utility.Input(" + matche.Value + ")\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + (char)95 + "input.Result" + arry[1]);//input(...)らへんをᐁ変数で置き換えて…
+                    s = s.Replace(m.Value, (char)95 + "input= Utility.Input" + matche.Value + "\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + "Utility.return_input\n\rsleep(6)" + arry[1]);//input(...)らへんをᐁ変数で置き換えて…
                 }
                 else
                 {
-                    s = s.Replace(m.Value, (char)95 + "input=Utility.Input(" + matche.Value + ")\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + (char)95 + "input.Result");//input(...)らへんをᐁ変数で置き換えて…
+                    s = s.Replace(m.Value, (char)95 + "input=Utility.Input" + matche.Value + "\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + "Utility.return_input\n\rsleep(6)");//input(...)らへんをᐁ変数で置き換えて…
                 }
                 
             }
@@ -116,7 +116,7 @@ namespace Ferrum
         {
             if (rteObj.Value == string.Empty)
             {
-
+                rteObj.Value = "<p>a = input\u0028\"TEST>>\"\u0029</p><p>print(a)</p>";
             }
         }
         /// <summary>
@@ -153,6 +153,7 @@ namespace Ferrum
         }
     }
     /// <summary>
+    ///  
     ///  
     /// </summary>
     ///<param name="oncheng_console">Console_messege</param>
@@ -222,10 +223,11 @@ namespace Ferrum
 
     public class Utility
     {
-        public static async Task<string> Input(string mess = null)
+        public static string return_input = "NULLs";
+        public async Task Input(string mess = null)
         {
             Console.WriteLine (mess);
-            return await Task.Run(() => Utility_port.Readline_core(mess));
+            return_input = await Task.Run(() => Utility_port.Readline_core(mess));
         }
 
         public static string Input_experimental(string mess)
