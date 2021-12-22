@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testscript", "testscript", 
 		test_2.py = test_2.py
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ferrum_python", "Ferrum_python\Ferrum_python.csproj", "{B7730165-433E-4A82-B5B9-923F426CDDD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{19E37ACA-2767-4D1C-96A2-D0A9F11ABD0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19E37ACA-2767-4D1C-96A2-D0A9F11ABD0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19E37ACA-2767-4D1C-96A2-D0A9F11ABD0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7730165-433E-4A82-B5B9-923F426CDDD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7730165-433E-4A82-B5B9-923F426CDDD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7730165-433E-4A82-B5B9-923F426CDDD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7730165-433E-4A82-B5B9-923F426CDDD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

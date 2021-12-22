@@ -5,6 +5,7 @@ using IronPython.Hosting;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
@@ -12,6 +13,12 @@ namespace MyApp // Note: actual namespace depends on the project name.
     {
         public static void Main(string[] args)
         {
+            ThreadPool.GetMaxThreads(out int workerThreads, out int portThreads);
+            Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
+            var a = ThreadPool.SetMaxThreads(1, 1);
+            Console.WriteLine(a);
+            ThreadPool.GetMaxThreads(out workerThreads, out portThreads);
+            Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
             Python_R();
         }
 
@@ -25,19 +32,33 @@ namespace MyApp // Note: actual namespace depends on the project name.
         static void Python_R()
         {
             string sauce = @"
-print('test')
-a = scope.Readline_alt('test')
-print(a)
+import threading
+import time
+def loop():
+    x = 2
+    for i in range (10):
+        x = x ** 2
+        print(x)
+        time.sleep(1)
+
+t = threading.Thread(target=loop)
+t.start()
+for i in range (8):
+    print('waiting')
+    time.sleep(1)
+t.join()
+print('end')
 ";
-            var u = new Utility();
-            var eng = Python.CreateEngine();
-            var scope = eng.CreateScope();
-            scope.SetVariable("scope", u);
-            ThreadPool.GetMaxThreads(out int workerThreads, out int portThreads);
-            Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
-            eng.Execute(sauce, scope);
-            ThreadPool.GetMaxThreads(out workerThreads, out portThreads);
-            Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
+            try
+            {
+                var eng = Python.CreateEngine();
+                var scope = eng.CreateScope();
+                eng.Execute(sauce, scope);
+            }catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
             Console.WriteLine("end");
         }
     }

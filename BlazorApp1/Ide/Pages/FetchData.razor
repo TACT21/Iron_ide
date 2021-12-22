@@ -25,7 +25,7 @@
         <RichTextEditorToolbarSettings Items="@ToolsForInline" />
     </SfRichTextEditor>
     <div class="container">
-        <p class="bottom-left">@((MarkupString)console)</p>
+        <p class="bottom-left">@((MarkupString)console.Replace("\r\n","<br/>"))</p>
     </div>
     <div style="display:flex">@q<SfMaskedTextBox @ref="@maskedTextBox"></SfMaskedTextBox><SfButton CssClass="e-flat" @onclick ="@Input" IconCss="e-icons e-play">Submit</SfButton></div>
     @if (debug)

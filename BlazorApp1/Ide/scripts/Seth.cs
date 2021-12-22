@@ -46,7 +46,7 @@ namespace Ferrum
         public string Converter(string raw)
         {
             Console.WriteLine(raw+"@converter");
-            string s = "from time import sleep\r\n"+ raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
+            string s = "Utility_port\r\nfrom time import sleep\r\n" + raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
             s = WebUtility.HtmlDecode(s);
             s = s.Replace("</p>", "\r\n");
             s = Regex.Replace(s, "<[^>]*?>", "");
@@ -230,11 +230,16 @@ namespace Ferrum
             return_input = await Task.Run(() => Utility_port.Readline_core(mess));
         }
 
-        public static string Input_experimental(string mess)
+        public static string Get_input(string mess)
         {
-            Utility_port.Print_alt(mess);
-            return Console.ReadLine();
+            return Utility_port.import_temp;
         }
+
+        public static void Set_q(string mess)
+        {
+            Utility_port.oncheng_input(mess);
+        }
+
         public static void Print(object mess = null)
         {
             Console.WriteLine(mess);
