@@ -121,4 +121,13 @@
   <data name="module" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\module.py;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="moduleasync" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moduleasync.py;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="moduleasync_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\moduleasync_.py;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="module_" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\module_.py;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

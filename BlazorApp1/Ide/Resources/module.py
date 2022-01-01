@@ -3,15 +3,15 @@
 import threading
 import time
 
-def Input_alt_core(timeout):
+def p1sxX76lst(timeout):
     global scope
-    for i in range (int(timeout)):
+    for jY5xvLmM22 in range (int(timeout)):
         if(scope.getinput(False)!=""):
             return scope.getinput(True)
         time.sleep(1)
 
 def Input_alt(timeout = 60):
-    t = threading.Thread(target=Input_alt_core)
+    t = threading.Thread(target=p1sxX76lst)
     t.start()
     t.join()
     return t

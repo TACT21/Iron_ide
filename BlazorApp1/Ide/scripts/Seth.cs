@@ -44,45 +44,55 @@ namespace Ferrum
             rteObj.Height = "40vh";
         }
 
-        public string Converter(string raw)
+        /// <summary>
+        /// module.py対応型
+        /// </summary>
+        /// <param name="raw"></param>
+        /// <param name="async">moduleasync.pyに読み込み変更するか</param>
+        public string Converter(string raw,bool async = false)
         {
-            Console.WriteLine(raw+"@converter");
-            string s = "Utility_port\r\n"+Ide.Properties.Resources.module+raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
-            s = WebUtility.HtmlDecode(s);
-            s = s.Replace("</p>", "\r\n");
-            s = Regex.Replace(s, "<[^>]*?>", "");
+            string module = string.Empty;
+            string input = string.Empty;
+            //モジュール化
+            if (async)
+            {
+                module = Encoding.UTF8.GetString(Ide.Properties.Resources.moduleasync);
+                input = Encoding.UTF8.GetString(Ide.Properties.Resources.moduleasync_);
+            }
+            else
+            {
+                module = Encoding.UTF8.GetString(Ide.Properties.Resources.module);
+                input = Encoding.UTF8.GetString(Ide.Properties.Resources.module);
+            }
+            //変換
+            raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");//tab四つをTABに変更
+            string s = module + WebUtility.HtmlDecode(raw);//HTMLを文字列化
+            s = s.Replace("</p>", "\r\n");//Pタグを改行に変更
+            s = Regex.Replace(s, "<[^>]*?>", "");//そのタグを削除
             output = s;
-            //TODO HOW TO Input "yield"
             MatchCollection matches = Regex.Matches(s, ".*?input\\u0028.*?\\u0029.*?");//Input functionの抽出
             foreach (Match m in matches)
             {
-                Match matche = Regex.Match(m.Value, "\\u0028.*?\\u0029");//input(...)を抜き出す。
+                Match matche = Regex.Match(m.Value, "\\u0028.*?\\u0029");//input(...)の(...)を抜き出す。
                 Console.WriteLine("SOA");
                 Console.WriteLine(matche);
                 Console.WriteLine(m.Value);
                 Console.WriteLine(m.Value.Split(matche.Value));
                 Console.WriteLine("EOA");
-                var arry = m.Value.Split(matche.Value);
-                if(arry.Length > 0)
+                var arry = m.Value.Split(matche.Value);//(...)前とあとを分割
+                if (arry.Length > 0)//(...)の後の記述あり
                 {
-                    s = s.Replace(m.Value, (char)95 + "input= Utility.Input" + matche.Value + "\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + "Utility.return_input\n\rsleep(6)" + arry[1]);//input(...)らへんをᐁ変数で置き換えて…
+                    s = s.Replace(m.Value,arry[0]+input.Replace("(???)", matche.Value)+arry[1]);
                 }
-                else
+                else//(...)の後の記述なし
                 {
-                    s = s.Replace(m.Value, (char)95 + "input=Utility.Input" + matche.Value + "\n\rsleep(6)\r\n" + arry[0].Replace("input", "") + "Utility.return_input\n\rsleep(6)");//input(...)らへんをᐁ変数で置き換えて…
+                    s = s.Replace(m.Value, arry[0] + input.Replace("(???)", matche.Value));
                 }
-                
+
             }
             s = s.Replace("print", "Utility.Print");
-            var a = new byte[s.Length];
-            for (int i = 0; i < s.Length; i++)
-            {
-                a[i] = Convert.ToByte(s[i]);
-            }
-            Console.WriteLine(Encoding.UTF8.GetString(a));
-            return Encoding.UTF8.GetString(a);
+            return s;
         }
-
 
         public void Mold()
         {
