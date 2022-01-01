@@ -35,6 +35,7 @@ namespace Ferrum
             new ToolbarItemModel() { Command = ToolbarCommand.Undo },
             new ToolbarItemModel() { Command = ToolbarCommand.Redo}
         };
+
         public void Start()
         {
             rteObj.EnableTabKey = true;
@@ -46,7 +47,7 @@ namespace Ferrum
         public string Converter(string raw)
         {
             Console.WriteLine(raw+"@converter");
-            string s = "Utility_port\r\nfrom time import sleep\r\n" + raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
+            string s = "Utility_port\r\n"+Ide.Properties.Resources.module+raw.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t");
             s = WebUtility.HtmlDecode(s);
             s = s.Replace("</p>", "\r\n");
             s = Regex.Replace(s, "<[^>]*?>", "");

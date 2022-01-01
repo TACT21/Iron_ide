@@ -7,3 +7,32 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+@((MarkupString)load)
+@code{
+    string load = "stert<br>";
+    public async void Test()
+    {
+        try
+        {
+            Core a = new Core();
+            a.Inst(load);
+            Thread t = new Thread(new ThreadStart(a.Exec));
+            t.Start();
+            await Task.Delay(1500);
+            load = a.Get();
+        }catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            load += e.Message;
+            load += "<br>";
+        }
+
+    }
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Test();
+        }
+    }
+}
