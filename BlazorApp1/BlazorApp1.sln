@@ -19,6 +19,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "testscript", "testscript", 
 		test_2.py = test_2.py
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApp", "..\BlazorMonaco-master\SampleApp\SampleApp.csproj", "{5D435FB6-6E7E-497F-BF8D-9E59A03F6B57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorMonaco", "..\BlazorMonaco-master\BlazorMonaco\BlazorMonaco.csproj", "{B189D791-B363-44CF-AE5B-FF594832A767}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{19E37ACA-2767-4D1C-96A2-D0A9F11ABD0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19E37ACA-2767-4D1C-96A2-D0A9F11ABD0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19E37ACA-2767-4D1C-96A2-D0A9F11ABD0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D435FB6-6E7E-497F-BF8D-9E59A03F6B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D435FB6-6E7E-497F-BF8D-9E59A03F6B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D435FB6-6E7E-497F-BF8D-9E59A03F6B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D435FB6-6E7E-497F-BF8D-9E59A03F6B57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B189D791-B363-44CF-AE5B-FF594832A767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B189D791-B363-44CF-AE5B-FF594832A767}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B189D791-B363-44CF-AE5B-FF594832A767}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B189D791-B363-44CF-AE5B-FF594832A767}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

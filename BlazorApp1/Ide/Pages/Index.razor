@@ -23,7 +23,7 @@
             @portThreads
         }
     </div>
-    <MonacoEditor Id="blazor-error-ui" />
+    <MonacoEditor Id="monaco" ConstructionOptions="EditorConstructionOptions" class="editor" />
     <!--
     <SfRichTextEditor  @ref="@rteObj" @EnableTabKey="true" @AutoSaveOnIdle="true">
         <RichTextEditorToolbarSettings Items="@ToolsForInline" />
@@ -96,4 +96,16 @@
     void write(){
 
     }
+
+     private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+	{
+		return new StandaloneEditorConstructionOptions
+		{
+			AutomaticLayout = true,
+			Language = "python",
+			Value = "function xyz() {\n" +
+					"   console.log(\"Hello world!\");\n" +
+					"}"
+		};
+	}
 }
