@@ -26,6 +26,11 @@
     <script src="_content/BlazorMonaco/jsInterop.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="python/python.contribution.js"></script>
+    <script>
+        window.Alert = function (message) {
+            alert(message);
+        }
+    </script>
 </body>
 
 </html>
