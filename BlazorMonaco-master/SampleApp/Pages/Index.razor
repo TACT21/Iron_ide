@@ -10,6 +10,8 @@
             <option value="vs-dark">Visual Studio Dark</option>
             <option value="hc-black">High Contrast Black</option>
         </select>
+
+        
     </div>
 </div>
 
@@ -48,6 +50,7 @@
     {
         if (firstRender)
         {
+            SampleApp.script.Storage.getcode = GetValue;
             await Task.Delay(1000);
             Chenge();
             await _editor.SetValue("print(\"Hello World\")");
@@ -98,9 +101,8 @@
         await _editor.SetValue(ValueToSet);
     }
 
-    private async Task GetValue()
+    public async Task<string> GetValue()
     {
-        var val = await _editor.GetValue();
-        Console.WriteLine($"value is: {val}");
+        return await _editor.GetValue();
     }
 }
