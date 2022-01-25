@@ -7,6 +7,8 @@ using System.Text;
 using Syncfusion.Blazor;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using BlazorWorker.BackgroundServiceFactory;
+using BlazorWorker.Core;
 
 namespace SampleApp
 {
@@ -21,6 +23,7 @@ namespace SampleApp
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddSyncfusionBlazor();
             builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddWorkerFactory();
             await builder.Build().RunAsync();
         }
     }

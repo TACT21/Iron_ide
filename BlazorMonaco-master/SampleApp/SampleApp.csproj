@@ -5,21 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="component\**" />
+    <Content Remove="component\**" />
+    <EmbeddedResource Remove="component\**" />
+    <None Remove="component\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
+    <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
     <PackageReference Include="IronPython" Version="3.4.0-alpha1" />
     <PackageReference Include="IronPython.StdLib" Version="3.4.0-alpha1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all" />
     <PackageReference Include="Syncfusion.Blazor.Buttons" Version="19.4.0.43" />
+    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="19.4.0.43" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="Tewr.BlazorWorker.BackgroundService" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BlazorMonaco\BlazorMonaco.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="component\" />
   </ItemGroup>
 
 </Project>
