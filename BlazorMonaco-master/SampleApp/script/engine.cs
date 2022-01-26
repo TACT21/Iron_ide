@@ -54,7 +54,4 @@ namespace SampleApp.script
         }
     }
 
-    public static class Utility
-    {
-    }
 }
