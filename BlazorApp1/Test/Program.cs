@@ -6,12 +6,14 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MyApp // Note: actual namespace depends on the project name.
 {
     public class Program
     {
-        public static void Main(string[] args)
+        [STAThread]
+        public static async Task Main(string[] args)
         {
             ThreadPool.GetMaxThreads(out int workerThreads, out int portThreads);
             Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
@@ -19,7 +21,35 @@ namespace MyApp // Note: actual namespace depends on the project name.
             Console.WriteLine(a);
             ThreadPool.GetMaxThreads(out workerThreads, out portThreads);
             Console.WriteLine("Worker threads={0}, Completion port threads={1}", workerThreads, portThreads);
-            Python_R();
+            Stopwatch sw = new Stopwatch();
+            //Python_R();
+            Console.ReadLine();
+            sw.Start();
+            Sleepsync();
+            sw.Stop();
+            Console.WriteLine(sw.Elapsed.ToString()); 
+            for(int i = 0; i < 10; i++)
+            {
+                sw.Reset();
+                sw.Start();
+                await VAsync(i);
+                sw.Stop();
+                Console.WriteLine(sw.Elapsed.ToString());
+            }
+            Console.ReadLine();
+        }
+
+        static int Sleepsync()
+        {
+            Thread.Sleep(1000);
+            return 1;
+        }
+
+        static async Task<int> VAsync(int a = 0)
+        {
+            await Task.Delay(1000);
+            Console.WriteLine(a);
+            return 1;
         }
 
         static void Ex()

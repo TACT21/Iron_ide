@@ -28,9 +28,12 @@ namespace SampleApp.script
             return getinput();
         }
 
-        static string Callinput()
-        { 
-            return jSRuntime.InvokeAsync<string>("GetInput", Assembly.GetEntryAssembly().GetCustomAttribute<GuidAttribute>().Value).ConfigureAwait(false);
+        public static string Callinput()
+        {
+            Console.WriteLine("Test");
+            var a = ((IJSInProcessRuntime)jSRuntime).Invoke<string>("GetInput", Assembly.GetEntryAssembly().GetCustomAttribute<GuidAttribute>().Value);
+            Console.WriteLine("Test");
+            return a;
         }
     }
 }

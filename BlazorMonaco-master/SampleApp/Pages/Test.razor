@@ -1,0 +1,11 @@
+﻿@page "/test"
+@inject IJSRuntime iJSRuntime;
+<h3>Test</h3>
+<button  @onclick="exsam">Test</button>
+@code {
+    public void exsam()
+    {
+        Interface.jSRuntime = iJSRuntime;
+        Console.WriteLine(Interface.Callinput());
+    }
+}
