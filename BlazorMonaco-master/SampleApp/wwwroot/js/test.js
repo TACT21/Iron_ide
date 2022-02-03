@@ -6,7 +6,7 @@
     }
 }
 
-function GetInput() {
+function GetInput(strimg) {
     console.log("Js")
     syncDelay(1000)
     return "This is test"

@@ -5,10 +5,11 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System;
 using System.Net;
+using Microsoft.JSInterop;
 
 namespace SampleApp.script
 {
-    public partial class Engine : ComponentBase
+    public partial class Engine
     {
         public SfMaskedTextBox maskedTextBox;//インプット
         public string question;//入力要求メッセージ
@@ -52,6 +53,13 @@ namespace SampleApp.script
             script = Regex.Replace(WebUtility.HtmlDecode(raw_script.Value.Replace("&nbsp;&nbsp;&nbsp;&nbsp;", "\t")).Replace("</p>", "\r\n"), "<[^>]*?>", ""); 
             Ignition();
         }
-    }
 
+        public string Test(IJSRuntime jSRuntime, string action_Func = "")
+        {
+            Console.WriteLine("Test");
+            var a = ((IJSInProcessRuntime)jSRuntime).Invoke<string>("GetInput", action_Func);
+            Console.WriteLine("Test");
+            return a;
+        }
+    }
 }

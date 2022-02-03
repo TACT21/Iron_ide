@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using IronPython.Hosting;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -37,6 +38,8 @@ namespace MyApp // Note: actual namespace depends on the project name.
                 Console.WriteLine(sw.Elapsed.ToString());
             }
             Console.ReadLine();
+            Python_R();
+            Console.ReadLine();
         }
 
         static int Sleepsync()
@@ -62,53 +65,40 @@ namespace MyApp // Note: actual namespace depends on the project name.
         static void Python_R()
         {
             string sauce = @"
-import threading
-import time
-def loop():
-    x = 2
-    for i in range (10):
-        x = x ** 2
-        print(x)
-        time.sleep(1)
-
-t = threading.Thread(target=loop)
-t.start()
-for i in range (8):
-    print('waiting')
-    time.sleep(1)
-t.join()
-print('end')
+print(Test.Read())
 ";
             try
             {
                 var eng = Python.CreateEngine();
                 var scope = eng.CreateScope();
+                var t = new Temp();
+                scope.SetVariable("Test", t);
                 eng.Execute(sauce, scope);
             }catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
-
+            Type y = typeof(Task<string>);
+            MemberInfo[] members = y.GetMembers(
+            BindingFlags.Public | BindingFlags.NonPublic |
+            BindingFlags.Instance | BindingFlags.Static |
+            BindingFlags.DeclaredOnly);
+            foreach (MemberInfo m in members)
+            {
+                //メンバの型と、名前を表示する
+                Console.WriteLine("{0} - {1}", m.MemberType, m.Name);
+            }
+            Console.WriteLine();
             Console.WriteLine("end");
         }
     }
-
-    public class Utility
+    public class Temp
     {
-        public static string Readline_alt(string mess)
-        {
-            Console.Write(mess + " >>>");
-            return Temp.Read().Result;
-        }
-    }
-    public static class Temp
-    {
-        public static async Task<string> Read()
+        public async Task<string> Read()
         {
             Console.WriteLine("console");
-            return await Task.Run(() => {
-                return Console.ReadLine();
-            });
+            await Task.Delay(1000);
+            return "End?";
         }
     }
 

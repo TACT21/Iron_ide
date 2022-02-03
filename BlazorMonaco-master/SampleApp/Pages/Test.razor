@@ -1,11 +1,22 @@
 ﻿@page "/test"
-@inject IJSRuntime iJSRuntime;
+@inject IJSRuntime iJSRuntime
+@using BlazorWorker.BackgroundServiceFactory
+@inject IWorkerFactory workerFactory
 <h3>Test</h3>
 <button  @onclick="exsam">Test</button>
 @code {
-    public void exsam()
+    public async void exsam()
     {
-        Interface.jSRuntime = iJSRuntime;
-        Console.WriteLine(Interface.Callinput());
+        // Create worker.
+        var worker = await workerFactory.CreateAsync();
+
+        // Create service reference. For most scenarios, it's safe (and best) to keep this 
+        // reference around somewhere to avoid the startup cost.
+        var service = await worker.CreateBackgroundServiceAsync<Engine>();
+
+        // Reference that live outside of the current scope should not be passed into the expression.
+        // To circumvent this, create a scope-local variable like this, and pass the local variable.
+        var variable = iJSRuntime;
+        var result = await service.RunAsync(s => s.Test(variable,""));
     }
 }

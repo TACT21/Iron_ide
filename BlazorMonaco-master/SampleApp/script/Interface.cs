@@ -27,13 +27,9 @@ namespace SampleApp.script
         {
             return getinput();
         }
+    }
+    public class Port
+    {
 
-        public static string Callinput()
-        {
-            Console.WriteLine("Test");
-            var a = ((IJSInProcessRuntime)jSRuntime).Invoke<string>("GetInput", Assembly.GetEntryAssembly().GetCustomAttribute<GuidAttribute>().Value);
-            Console.WriteLine("Test");
-            return a;
-        }
     }
 }
