@@ -6,8 +6,25 @@
     }
 }
 
-function GetInput(strimg) {
-    console.log("Js")
-    syncDelay(1000)
-    return "This is test"
+function GetInput(quest, timeout = 60) {
+    for (var i = 0; i < timeout; i++) {
+        DotNet.invokeMethodAsync('SampleApp', 'Clearinput').then(data => {
+            if (data != "") {
+                return deta
+            }
+        });
+        syncsleep(1).then{
+            console.log("NULL")
+        }
+    }
+    return "Null"
+}
+
+function sleep(sec) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            console.log(`wait: ${sec} sec`);
+            resolve(sec);
+        }, sec * 1000);
+    });
 }

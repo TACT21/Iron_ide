@@ -1,5 +1,4 @@
 ﻿@page "/"
-@inject NavigationManager MyNavigationManager
 
 <h3>Code Editor</h3>
 
@@ -52,7 +51,6 @@
         if (firstRender)
         {
             SampleApp.script.Storage.getcode = GetValue;
-            SampleApp.script.Interface.navigationManager = MyNavigationManager;
             await Task.Delay(1000);
             Chenge();
             await _editor.SetValue("print(\"Hello World\")");

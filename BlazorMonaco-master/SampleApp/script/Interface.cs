@@ -8,28 +8,28 @@ namespace SampleApp.script
 {
     public static class Interface
     {
-        public static NavigationManager navigationManager { get; set; }
-        public static IJSRuntime jSRuntime { get; set; }
-        //初期化済みか
-        private static bool initialized = false;
-        public static bool getinitialized { get; }
-        public static Func<string> getinput { set; get; }
+        public static IJSRuntime jSRuntime { set; get; }
+        public static string cmd { set; get; }
+        public static Action clear;
+        public static Action<string> set;
 
-        static void Initialize()
+        [JSInvokable]
+        public static string Getinput()
         {
-           var a = navigationManager != null ? navigationManager.BaseUri : null;
-            //SetBaseUrl関数を行う
-            jSRuntime.InvokeVoidAsync("SetBaseUrl", a);
-            initialized = true;
+            return cmd;
         }
 
-        static string Getinput()
+        [JSInvokable]
+        public static void Clearinput()
         {
-            return getinput();
+            Console.WriteLine("called");
+            //clear();
         }
-    }
-    public class Port
-    {
 
-    }
+        [JSInvokable]
+        public static void Setinput(string mess)
+        {
+            set(mess);
+        }
+    }        
 }

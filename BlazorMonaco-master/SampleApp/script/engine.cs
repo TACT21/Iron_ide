@@ -9,7 +9,7 @@ using Microsoft.JSInterop;
 
 namespace SampleApp.script
 {
-    public partial class Engine
+    public class Engine
     {
         public SfMaskedTextBox maskedTextBox;//インプット
         public string question;//入力要求メッセージ
@@ -54,10 +54,10 @@ namespace SampleApp.script
             Ignition();
         }
 
-        public string Test(IJSRuntime jSRuntime, string action_Func = "")
+        public string Test(IJSRuntime jSRuntime, string question = "Please input something")
         {
             Console.WriteLine("Test");
-            var a = ((IJSInProcessRuntime)jSRuntime).Invoke<string>("GetInput", action_Func);
+            var a = ((IJSInProcessRuntime)jSRuntime).Invoke<string>("GetInput", question);
             Console.WriteLine("Test");
             return a;
         }
