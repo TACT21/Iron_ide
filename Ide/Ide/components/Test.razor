@@ -1,0 +1,83 @@
+﻿@page "/TEST"
+@using IronPython.Hosting
+@using System.Text
+@using Ide.Components
+<h3>Test</h3>
+<button @onclick="Run">Test Run</button><br />
+<input type="checkbox" id="addition" name="math" value="add" bind="@input" /><label for="addition">Addition</label>
+
+@result
+@code {
+    string result = string.Empty;
+    bool i = false;
+    bool input = false;
+    async void Run()
+    {
+        var utility = new Utility();
+        utility.func = Input_dummy;
+        Task sleepyTask = Task.Run(() =>
+        {
+            utility.WaitTask();
+        });
+        sleepyTask.Wait();
+        Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "　Called");
+        this.InvokeAsync(() =>
+        {
+            var runtime = Python.CreateRuntime();
+            runtime.IO.SetInput(new MemoryStream(), Encoding.Default);
+            var engine = Python.GetEngine(runtime);
+            var scope = engine.CreateScope();
+            scope.SetVariable("Utility", utility);
+            engine.Execute(@"Utility.Print(Utility.Test())", scope);
+        });
+    }
+
+    public string Input_dummy()
+    {
+        if (input)
+        {
+            return "true";
+        }
+        return "";
+    }
+    public class Utility : ComponentBase
+    {
+        public string input = "";
+        public Func<string> func = null;
+
+        public string Test()
+        {
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + "　Called");
+            for (var i = 0; i < 30; i++)
+            {
+                input = func();
+                if(input != "")
+                {
+                    break;
+                }
+                else
+                {
+                    Task sleepyTask = Task.Run(() =>
+                    {
+                        WaitTask();
+                    });
+                    sleepyTask.Wait();
+                }
+                Console.WriteLine(input);
+            }
+            return input;
+        }
+
+        public async Task WaitTask()
+        {
+            await Task.Delay(1000);
+        }
+
+        public void Print(string mess)
+        {
+            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss") + " Python print:" + mess);
+        }
+
+
+    }
+}
