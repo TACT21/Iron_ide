@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 using IronPython.Compiler;
 using IronPython.Runtime.Operations;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
+using System.Reflection;
 
 namespace ide.Components.Engine
 {
@@ -133,39 +136,123 @@ namespace ide.Components.Engine
     }
     class IronUtility
     {
-        public  SortedList<string, dynamic>? Funcs { get; private set; }
+        public uint waitingSec = 0;
+        /// <summary>
+        /// the sets of (function name, type)
+        /// </summary>
+        public  SortedList<string, dynamic?>? Funcs { get; private set; }
         public IJSInProcessObjectReference? jSRuntime { set; get; }= null;
         public object? DoTask(string name, object[]args)
         {
-            string sddressName = "tempBridge";
-            jSRuntime.InvokeVoid("SessionStorageWrite", new string[]{ sddressName,name});
-            if (typeof(this.Funcs[name]).Name.indexof("Action") == -1)
+            string id = Guid.NewGuid().ToString();
+            string sddressName = "ActionBridge";
+            string message = "DoAction" + id + "," + name;
+            if (this.Funcs[name] == null)
             {
+                throw new NullReferenceException();
+            }else if (this.Funcs[name].GetType().Name.IndexOf("Action") != -1)
+            {
+                jSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
                 return null;
             }
-            else
+            else if (this.Funcs[name].GetType().Name.IndexOf("Func") != -1)
             {
-
+                jSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
+                string result = string.Empty;
+                for (int i = 0; i <= waitingSec;)
+                {
+                    result = jSRuntime.Invoke<string>("SessionStorageRead", new string[] { id });
+                    if (result != null)
+                    {
+                        object? treasure = null;
+                        //Write string into memory stream with specific encording
+                        using (MemoryStream ms = new MemoryStream(Settings.defaultEncoding.GetBytes(result)))
+                        {
+                            if (Settings.takingRisk)
+                            {
+                                BinaryFormatter formatter = new BinaryFormatter();
+                                // Deserialize the hashtable from the file and
+                                // assign the reference to the local variable.
+                                treasure = formatter.Deserialize(ms);
+                            }
+                            else
+                            {
+                                //Deserialize with XmlSerializer.
+                                XmlSerializer serializer = new XmlSerializer(this.Funcs[name].GetMethodInfo().ReturnType);
+                                treasure = serializer.Deserialize(ms);
+                            }
+                        }
+                        return treasure;
+                    } 
+                    Thread.Sleep(1000);
+                    if(waitingSec != 0)
+                    {
+                        i++;
+                    }
+                }
+                return null;
             }
-            
+            return this.Funcs[name];
         }
     }
 
-    public class Initializer
-    {
-        public async Task Initialize(IWorkerFactory workerFactory, LinkedList<(string, string, object)> Funcs, IJSInProcessRuntime jSRuntime, string script)
+    public class Initializer { 
+        Dictionary<string, dynamic> _Funcs;
+        IJSRuntime jSRuntime;
+        public async Task Initialize(IWorkerFactory workerFactory, LinkedList<(string, string, dynamic)> funcs, IJSRuntime jSRuntime, string script)
         {
+            foreach (var item in funcs)
+            {
+                _Funcs.Add(item.Item1, item.Item3);  
+            }
+            this.jSRuntime = jSRuntime;
             // Create worker.
             var worker = await workerFactory.CreateAsync();
             // Create service reference. For most scenarios, it's safe (and best) to keep this 
             // reference around somewhere to avoid the startup cost.
             var service = await worker.CreateBackgroundServiceAsync<Core>();
-            await service.RunAsync(s => s.Initializer(Funcs, jSRuntime));
-            var result = await service.RunAsync(s => s.Ignition());
+            await service.RunAsync(s => s.Initializer(funcs, (IJSInProcessRuntime)jSRuntime));
+            var result = await service.RunAsync(s => s.Ignition(script));
         }
-        public object? DoTask(string id, object[]args)
-        {
 
+        public async Task DoTask(string id,string name, object[]args)
+        {
+            string fomattee = String.Empty;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                if (_Funcs[name].GetMethodInfo().ReturnType.FullName.IndexOf("Task") != -1)
+                {
+                    var result = await _Funcs[name]();
+                    if (Settings.takingRisk)
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.Serialize(ms, result);
+                    }
+                    else
+                    {
+                        XmlSerializer serializer = new XmlSerializer(Type.GetType(result));
+                        serializer.Serialize(ms, result);
+                    }
+                }
+                else
+                {
+                    var result = await Task.Run(() => _Funcs[name]());
+                    if (Settings.takingRisk)
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.Serialize(ms, result);
+                    }
+                    else
+                    {
+                        XmlSerializer serializer = new XmlSerializer(Type.GetType(result));
+                        serializer.Serialize(ms, result);
+                    }
+                }
+                byte[] bytes = new byte[(int)ms.Length];
+                await ms.ReadAsync(bytes, 0, (int)ms.Length);
+                fomattee = Settings.defaultEncoding.GetString(bytes);
+                await this.jSRuntime.InvokeVoidAsync("SessionStorageWrite", new string[] { id, fomattee }); 
+            }
         }
 
     }
