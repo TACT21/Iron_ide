@@ -8,6 +8,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using System.Reflection;
+using IronPython.Hosting;
+using System.Text;
+using System.Runtime.Serialization;
+using BlazorWorker.WorkerBackgroundService;
 
 namespace ide.Components.Engine
 {
@@ -16,15 +20,15 @@ namespace ide.Components.Engine
         /// <summary>
         /// When you use interactive functions, you must set this value before ignition
         /// </summary>
-        public IJSInProcessRuntime? jSRuntime {
+        public IJSInProcessRuntime? JSRuntime {
             set {
-                if (running) { 
+                if (IsRunning) { 
                     throw new IOException(); 
                 }
-                this.jSRuntime = value;
+                this.JSRuntime = value;
             }
             private get {
-                return this.jSRuntime;
+                return this.JSRuntime;
             } 
         }
         /// <summary>
@@ -38,7 +42,7 @@ namespace ide.Components.Engine
         {
             set
             {
-                if (running)
+                if (IsRunning)
                 {
                     throw new IOException();
                 }
@@ -49,22 +53,35 @@ namespace ide.Components.Engine
                 return this.Funcs;
             }
         }
-        public bool running { private set; get; } = false;
+        public List<Assembly>? Assemblies
+        {
+            set
+            {
+                if (IsRunning)
+                {
+                    throw new IOException();
+                }
+                this.Assemblies = value;
+            }
+            private get
+            {
+                return this.Assemblies;
+            }
+        }
+        public bool IsRunning { private set; get; } = false;
         /// <summary>
         /// function call agent. args is there:(id,position,args)
         /// </summary>
         public Action<string,string,object[]>? funcArgent { get; set; } = null;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        /// <exception cref="IOException"></exception>
-        public async Task Ignition(string script)
+        public async Task<Dictionary<string,object>> Ignition(string script,bool IsDebugging)
         {
-            if(jSRuntime == null && Funcs != null && Funcs.Count > 0) { throw new NullReferenceException(); }
-            if (running) { throw new IOException(); }
+            Microsoft.Scripting.Hosting.ScriptEngine scriptEngine;
+            Microsoft.Scripting.Hosting.ScriptScope scriptScope;
+            Microsoft.Scripting.Hosting.ScriptSource scriptSource;
+            if (JSRuntime == null && Funcs != null && Funcs.Count > 0) { throw new NullReferenceException(); }
+            if (IsRunning) { throw new IOException(); }
             var task = Transformer(script); 
-            SortedDictionary<string, object> FuncsNames = new();
+/*            SortedDictionary<string, object> FuncsNames = new();
             if (Funcs == null)
             {
                 Funcs = new LinkedList<(string, string, object)>();
@@ -75,8 +92,33 @@ namespace ide.Components.Engine
                 {
                     FuncsNames.Add(item.Item2, item.Item3);
                 }
+            }*/
+            var runtime = Python.CreateRuntime();
+            runtime.IO.SetInput(new MemoryStream(), Encoding.Default);
+            scriptEngine = Python.GetEngine(runtime);
+            foreach (var assembly in Assemblies)
+            {
+                scriptEngine.Runtime.LoadAssembly(assembly);
             }
-            script = await task;
+            scriptScope = scriptEngine.CreateScope();
+            scriptSource = scriptEngine.CreateScriptSourceFromString(await task);
+            var utility = new IronUtility();
+            scriptScope.SetVariable("IronPythonUtility", utility);
+            scriptSource.Execute(scriptScope);
+            var vars = scriptScope.GetVariableNames();
+            Dictionary<string, object> result = new();
+            if (IsDebugging)
+            {
+                foreach (var item in vars)
+                {
+                    object value;
+                    if (scriptScope.TryGetVariable(item,out value))
+                    {
+                        result.Add(item, value);
+                    }                
+                }
+            }
+            return result;
         }
         private async Task<string> Transformer (string script)
         {
@@ -101,10 +143,15 @@ namespace ide.Components.Engine
         /// <summary>
         /// Initialize a instance after create this from this class.
         /// </summary>
-        /// <param name="Funcs">jSRuntime</param>
-        /// <param name="jSRuntime">Funcs</param>
-        public void Initializer(LinkedList<(string, string, object)> Funcs, IJSInProcessRuntime jSRuntime)
+        /// <param name="Funcs">JSRuntime</param>
+        /// <param name="JSRuntime">Funcs (Allow default)</param>
+        /// <param name="assemblies">assemblies (Allow default)</param>
+        public void Initializer(LinkedList<(string, string, object)> Funcs, IJSInProcessRuntime JSRuntime,List<Assembly> assemblies)
         {
+            if (IsRunning)
+            {
+                throw new IOException();
+            }
             Exception? ex = null;
             if(this.Funcs == null)
             {
@@ -120,15 +167,29 @@ namespace ide.Components.Engine
             {
                 ex = e;
             }
+
             try
             {
-                this.jSRuntime = jSRuntime;
+                this.JSRuntime = JSRuntime;
             }
             catch (Exception e)
             {
                 ex = e;
             }
             if(ex != null)
+            {
+                throw ex;
+            }
+
+            try
+            {
+                this.Assemblies = assemblies;
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            if (ex != null)
             {
                 throw ex;
             }
@@ -141,7 +202,7 @@ namespace ide.Components.Engine
         /// the sets of (function name, type)
         /// </summary>
         public  SortedList<string, dynamic?>? Funcs { get; private set; }
-        public IJSInProcessObjectReference? jSRuntime { set; get; }= null;
+        public IJSInProcessObjectReference? JSRuntime { set; get; }= null;
         public object? DoTask(string name, object[]args)
         {
             string id = Guid.NewGuid().ToString();
@@ -152,16 +213,16 @@ namespace ide.Components.Engine
                 throw new NullReferenceException();
             }else if (this.Funcs[name].GetType().Name.IndexOf("Action") != -1)
             {
-                jSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
+                JSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
                 return null;
             }
             else if (this.Funcs[name].GetType().Name.IndexOf("Func") != -1)
             {
-                jSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
+                JSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
                 string result = string.Empty;
                 for (int i = 0; i <= waitingSec;)
                 {
-                    result = jSRuntime.Invoke<string>("SessionStorageRead", new string[] { id });
+                    result = JSRuntime.Invoke<string>("SessionStorageRead", new string[] { id });
                     if (result != null)
                     {
                         object? treasure = null;
@@ -182,6 +243,7 @@ namespace ide.Components.Engine
                                 treasure = serializer.Deserialize(ms);
                             }
                         }
+                        this.JSRuntime.InvokeVoid("SessionStorageRemove", new string[] { id});
                         return treasure;
                     } 
                     Thread.Sleep(1000);
@@ -195,26 +257,30 @@ namespace ide.Components.Engine
             return this.Funcs[name];
         }
     }
-
-    public class Initializer { 
+    public class Initializer:IDisposable { 
         Dictionary<string, dynamic> _Funcs;
-        IJSRuntime jSRuntime;
-        public async Task Initialize(IWorkerFactory workerFactory, LinkedList<(string, string, dynamic)> funcs, IJSRuntime jSRuntime, string script)
+        IJSRuntime JSRuntime;
+        IWorkerBackgroundService<Core>? service;
+        //NetworkStreamに変更の検討
+        public async Task Initialize(IWorkerFactory workerFactory, LinkedList<(string, string, dynamic)> funcs, IJSInProcessRuntime JSRuntime, string script,List<Assembly>? assemblies = default)
         {
+            if(assemblies == null)
+            {
+                assemblies = new List<Assembly>();
+            }
             foreach (var item in funcs)
             {
                 _Funcs.Add(item.Item1, item.Item3);  
             }
-            this.jSRuntime = jSRuntime;
+            this.JSRuntime = JSRuntime;
             // Create worker.
             var worker = await workerFactory.CreateAsync();
             // Create service reference. For most scenarios, it's safe (and best) to keep this 
             // reference around somewhere to avoid the startup cost.
-            var service = await worker.CreateBackgroundServiceAsync<Core>();
-            await service.RunAsync(s => s.Initializer(funcs, (IJSInProcessRuntime)jSRuntime));
-            var result = await service.RunAsync(s => s.Ignition(script));
+            this.service = await worker.CreateBackgroundServiceAsync<Core>();
+            await service.RunAsync(s => s.Initializer(funcs, JSRuntime, assemblies));
+            var result = await service.RunAsync(s => s.Ignition(script,false));
         }
-
         public async Task DoTask(string id,string name, object[]args)
         {
             string fomattee = String.Empty;
@@ -251,10 +317,13 @@ namespace ide.Components.Engine
                 byte[] bytes = new byte[(int)ms.Length];
                 await ms.ReadAsync(bytes, 0, (int)ms.Length);
                 fomattee = Settings.defaultEncoding.GetString(bytes);
-                await this.jSRuntime.InvokeVoidAsync("SessionStorageWrite", new string[] { id, fomattee }); 
+                await this.JSRuntime.InvokeVoidAsync("SessionStorageWrite", new string[] { id, fomattee }); 
             }
         }
+        public void Dispose()
+        {
 
+        }
     }
 
 }
