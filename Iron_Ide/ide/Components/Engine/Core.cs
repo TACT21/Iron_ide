@@ -206,19 +206,18 @@ namespace ide.Components.Engine
         public object? DoTask(string name, object[]args)
         {
             string id = Guid.NewGuid().ToString();
-            string sddressName = "ActionBridge";
-            string message = "DoAction" + id + "," + name;
+            string message = "DoAction" + id + "," + name + ",\"" + String.Join("\"\a\"",args)+"\"";
             if (this.Funcs[name] == null)
             {
                 throw new NullReferenceException();
             }else if (this.Funcs[name].GetType().Name.IndexOf("Action") != -1)
             {
-                JSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
+                JSRuntime.InvokeVoid("SessionStorageWrite", new string[] { Settings.FunctionBridgeName, message });
                 return null;
             }
             else if (this.Funcs[name].GetType().Name.IndexOf("Func") != -1)
             {
-                JSRuntime.InvokeVoid("SessionStorageWrite", new string[] { sddressName, message });
+                JSRuntime.InvokeVoid("SessionStorageWrite", new string[] { Settings.FunctionBridgeName, message });
                 string result = string.Empty;
                 for (int i = 0; i <= waitingSec;)
                 {
@@ -257,73 +256,4 @@ namespace ide.Components.Engine
             return this.Funcs[name];
         }
     }
-    public class Initializer:IDisposable { 
-        Dictionary<string, dynamic> _Funcs;
-        IJSRuntime JSRuntime;
-        IWorkerBackgroundService<Core>? service;
-        //NetworkStreamに変更の検討
-        public async Task Initialize(IWorkerFactory workerFactory, LinkedList<(string, string, dynamic)> funcs, IJSInProcessRuntime JSRuntime, string script,List<Assembly>? assemblies = default)
-        {
-            if(assemblies == null)
-            {
-                assemblies = new List<Assembly>();
-            }
-            foreach (var item in funcs)
-            {
-                _Funcs.Add(item.Item1, item.Item3);  
-            }
-            this.JSRuntime = JSRuntime;
-            // Create worker.
-            var worker = await workerFactory.CreateAsync();
-            // Create service reference. For most scenarios, it's safe (and best) to keep this 
-            // reference around somewhere to avoid the startup cost.
-            this.service = await worker.CreateBackgroundServiceAsync<Core>();
-            await service.RunAsync(s => s.Initializer(funcs, JSRuntime, assemblies));
-            var result = await service.RunAsync(s => s.Ignition(script,false));
-        }
-        public async Task DoTask(string id,string name, object[]args)
-        {
-            string fomattee = String.Empty;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                if (_Funcs[name].GetMethodInfo().ReturnType.FullName.IndexOf("Task") != -1)
-                {
-                    var result = await _Funcs[name]();
-                    if (Settings.takingRisk)
-                    {
-                        BinaryFormatter formatter = new BinaryFormatter();
-                        formatter.Serialize(ms, result);
-                    }
-                    else
-                    {
-                        XmlSerializer serializer = new XmlSerializer(Type.GetType(result));
-                        serializer.Serialize(ms, result);
-                    }
-                }
-                else
-                {
-                    var result = await Task.Run(() => _Funcs[name]());
-                    if (Settings.takingRisk)
-                    {
-                        BinaryFormatter formatter = new BinaryFormatter();
-                        formatter.Serialize(ms, result);
-                    }
-                    else
-                    {
-                        XmlSerializer serializer = new XmlSerializer(Type.GetType(result));
-                        serializer.Serialize(ms, result);
-                    }
-                }
-                byte[] bytes = new byte[(int)ms.Length];
-                await ms.ReadAsync(bytes, 0, (int)ms.Length);
-                fomattee = Settings.defaultEncoding.GetString(bytes);
-                await this.JSRuntime.InvokeVoidAsync("SessionStorageWrite", new string[] { id, fomattee }); 
-            }
-        }
-        public void Dispose()
-        {
-
-        }
-    }
-
 }
