@@ -4,9 +4,10 @@ using BlazorWorker.BackgroundServiceFactory;
 using Microsoft.JSInterop;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
+using BlazorMonaco;
+
 
 namespace ide.Components.Engine
 {

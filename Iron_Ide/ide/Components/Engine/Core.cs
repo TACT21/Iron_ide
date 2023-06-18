@@ -81,18 +81,6 @@ namespace ide.Components.Engine
             if (JSRuntime == null && Funcs != null && Funcs.Count > 0) { throw new NullReferenceException(); }
             if (IsRunning) { throw new IOException(); }
             var task = Transformer(script); 
-/*            SortedDictionary<string, object> FuncsNames = new();
-            if (Funcs == null)
-            {
-                Funcs = new LinkedList<(string, string, object)>();
-            }
-            else
-            {
-                foreach (var item in Funcs)
-                {
-                    FuncsNames.Add(item.Item2, item.Item3);
-                }
-            }*/
             var runtime = Python.CreateRuntime();
             runtime.IO.SetInput(new MemoryStream(), Encoding.Default);
             scriptEngine = Python.GetEngine(runtime);
