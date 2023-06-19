@@ -1,8 +1,10 @@
 ﻿@using BlazorMonaco
 @using BlazorMonaco.Editor
 @using BlazorMonaco.Languages
-
-<h3>Monaco Editor Example</h3>
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Graph
+@inject Microsoft.Graph.GraphServiceClient GraphServiceClient
+@attribute [Authorize]
 
 <StandaloneCodeEditor @ref="@_editor" Id="my-editor-instance-id" ConstructionOptions="EditorConstructionOptions" />
 
