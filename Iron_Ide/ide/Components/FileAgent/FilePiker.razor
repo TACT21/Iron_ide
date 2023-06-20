@@ -1,0 +1,72 @@
+﻿@using Toolbelt.Blazor.FileDropZone
+
+<section class="comand_pallet">
+    <button></button> @*New file*@
+    <button></button> @*File upload*@
+    <button></button> @*File download*@
+    <button></button> @*All file download*@
+    <button></button> @*Save on local storage*@
+</section>
+<FileDropZone>
+    <InputFile OnChange="OnInputFileChange" />
+    @foreach (var file in this.Files)
+    {
+        <div @key="file.Id">
+            <button @onclick="() => InvokeFileOpener(file)">@file.Name</button>
+            <button @onclick="() => OnClickRemove(file)">削除</button>
+        </div>
+    }
+</FileDropZone>
+<section style="@(HasError?"display:blocked":"display:none")">
+    <p>ファイルサイズが大きすぎます。5MB以下に調節してください。</p>
+</section>
+
+@code{
+    bool HasError = false;
+    List<FileObject> Files = new();
+    List<Func<int,Task>> Openers = new();
+
+    private class FileObject
+    {
+        public Guid Id; // 固有の ID
+        public string Name; // 名前
+        public string Path;
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs args)
+    {
+        try
+        {
+            var file = new FileCapsule(
+                args.File.OpenReadStream(((long)(5120000))) //5MB
+                , "/" + args.File.Name
+                , true
+                , args.File.Name);
+            FileAgent.AppendFile(file);
+        }catch(IOException ex)
+        {
+            Console.Error.WriteLine("File size is too big.\n"+ex.Message);
+        }catch
+        {
+            throw;
+        }
+        foreach (var item in FileAgent.capsules)
+        {
+            Files.Add(new FileObject() { Id = Guid.NewGuid(), Name = item.Name, Path = item.Path });
+        }
+    }
+
+    private void OnClickRemove(FileObject file)
+    {
+        this.Files.Remove(file);
+    }
+
+    private void InvokeFileOpener(FileObject file)
+    {
+        var index = this.Files.IndexOf(file);
+        foreach (var item in Openers)
+        {
+            item(index);
+        }  
+    }
+}

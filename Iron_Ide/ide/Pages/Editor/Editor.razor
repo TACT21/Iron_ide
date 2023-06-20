@@ -1,0 +1,56 @@
+﻿@page "/editor"
+
+@using BlazorMonaco
+@using BlazorMonaco.Editor
+@using BlazorMonaco.Languages
+@using ide.Components.FileAgent
+
+<main>
+    <FilePiker @ref="_File" />
+    <StandaloneCodeEditor @ref="@_editor" Id="my-editor-instance-id" ConstructionOptions="EditorConstructionOptions" />
+</main>
+
+
+@code {
+    private StandaloneCodeEditor _editor = null!;
+    private FilePiker _File = null!;
+    private FileCapsule capsule = null!;
+    private int CullentNumber = 0;
+
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+                Language = "python",
+                GlyphMargin = true,
+                Value = string.Empty
+        };
+    }
+
+    public async Task<string> GetValue()
+    {
+        var result = await _editor.GetValue();
+        return result;
+    }
+
+    public async Task ChengeEditing(int index)
+    {
+        var context = await GetValue();
+        lock (FileAgent.LockObjects[CullentNumber])
+        {
+            FileAgent.capsules[CullentNumber].File.SetLength(0);
+            FileAgent.capsules[CullentNumber].File.Write(
+                FileAgent.capsules[CullentNumber].Encoding.GetBytes(context)
+            );
+        }
+        CullentNumber = index;
+        var content = new byte[FileAgent.capsules[CullentNumber].File.Length];
+        lock (FileAgent.LockObjects[CullentNumber])
+        {
+            FileAgent.capsules[CullentNumber].File.Read(content,0,content.Length);
+        }
+        await _editor.SetValue(FileAgent.capsules[CullentNumber].Encoding.GetString(content));
+        StateHasChanged();
+    }
+
+}

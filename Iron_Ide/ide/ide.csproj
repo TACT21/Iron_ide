@@ -23,6 +23,7 @@
     <PackageReference Include="Microsoft.Graph" Version="4.29.0" />
     <PackageReference Include="Tewr.BlazorWorker.BackgroundService" Version="3.2.2" />
     <PackageReference Include="Tewr.BlazorWorker.Core" Version="3.2.2" />
+    <PackageReference Include="Toolbelt.Blazor.FileDropZone" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
