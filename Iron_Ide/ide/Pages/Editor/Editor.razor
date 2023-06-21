@@ -7,15 +7,21 @@
 
 <main>
     <FilePiker @ref="_File" />
-    <StandaloneCodeEditor @ref="@_editor" Id="my-editor-instance-id" ConstructionOptions="EditorConstructionOptions" />
+    <StandaloneCodeEditor @ref="@_editor" Id="my-editor-instance-id" ConstructionOptions="EditorConstructionOptions" OnDidInit="EditorOnDidInit" />
 </main>
 
+<style>
+    .decorationContentClass{
+        height:100vh;
+    }
+</style>
 
 @code {
     private StandaloneCodeEditor _editor = null!;
     private FilePiker _File = null!;
     private FileCapsule capsule = null!;
     private int CullentNumber = 0;
+    private string[] decorationIds = new string[0];
 
     private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
     {
@@ -25,6 +31,33 @@
                 GlyphMargin = true,
                 Value = string.Empty
         };
+    }
+
+    private async Task EditorOnDidInit()
+    {
+        Console.WriteLine("Init");
+        await _editor.AddCommand((int)KeyMod.CtrlCmd | (int)KeyCode.KeyH, (args) =>
+        {
+            Console.WriteLine("Ctrl+H : Initial editor command is triggered.");
+        });
+
+        var newDecorations = new ModelDeltaDecoration[]
+        {
+            new ModelDeltaDecoration
+            {
+                
+                Range = new BlazorMonaco.Range(3,1,3,1),
+                Options = new ModelDecorationOptions
+                {
+                    IsWholeLine = true,
+                    ClassName = "decorationContentClass",
+                    GlyphMarginClassName = "decorationGlyphMarginClass"
+                }
+            }
+        };
+
+        decorationIds = await _editor.DeltaDecorations(null, newDecorations);
+        // You can now use 'decorationIds' to change or remove the decorations
     }
 
     public async Task<string> GetValue()

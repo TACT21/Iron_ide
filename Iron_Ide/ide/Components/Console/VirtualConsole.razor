@@ -1,0 +1,16 @@
+﻿@page "/debug/{Script}"
+
+@using ide.Components.Editor
+
+@inherits VirtualConsoleManager
+
+<div>
+    <div>
+        @((MarkupString)ConsoleOutput)
+    </div>
+    <div>
+        <label for="console-ask">@ConsoleAsk</label>
+        <InputText id="console-ask" @bind-Value="@ConsoleInput"/>
+        <button @onclick="EnterConsole">Enter</button>
+    </div>
+</div>
