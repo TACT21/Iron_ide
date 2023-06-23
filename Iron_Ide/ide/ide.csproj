@@ -8,11 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Components\FuncBar\**" />
+    <Compile Remove="wwwroot\scripts\node_modules\**" />
+    <Content Remove="Components\FuncBar\**" />
+    <Content Remove="wwwroot\scripts\node_modules\**" />
+    <EmbeddedResource Remove="Components\FuncBar\**" />
+    <EmbeddedResource Remove="wwwroot\scripts\node_modules\**" />
+    <None Remove="Components\FuncBar\**" />
+    <None Remove="wwwroot\scripts\node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Components\Console\VirtualConsoleOld.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorMonaco" Version="3.0.0" />
     <PackageReference Include="IronPython.StdLib" Version="3.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="6.0.18" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.18" />
@@ -26,12 +36,12 @@
     <PackageReference Include="Toolbelt.Blazor.FileDropZone" Version="2.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\FuncBar\" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\img\icon\" />
 	</ItemGroup>
 
 </Project>

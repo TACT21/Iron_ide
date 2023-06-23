@@ -1,3 +1,9 @@
-﻿.editor {
-    height:50vh;
+﻿#editor {
+    height : 50vh;
+    grid-column: 2;
+}
+
+main{
+    display:grid;
+    grid-template-columns: 150px 1fr;
 }

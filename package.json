@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "monaco-editor": "^0.31.1"
+    "ace-builds": "^1.23.0",
+    "monaco-editor": "^0.31.1",
+    "react-ace": "^10.1.0"
   }
 }

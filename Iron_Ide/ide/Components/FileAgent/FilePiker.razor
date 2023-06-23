@@ -1,19 +1,19 @@
 ﻿@using Toolbelt.Blazor.FileDropZone
 
 <section class="comand_pallet">
-    <button></button> @*New file*@
-    <button></button> @*File upload*@
-    <button></button> @*File download*@
-    <button></button> @*All file download*@
-    <button></button> @*Save on local storage*@
+    <button @onclick="AddFile"><span class="oi" data-glyph="plus"></span></button> @*New file*@
+    <label for="file_input"><span class="oi" data-glyph="data-transfer-upload"></span></label> @*File upload*@
+    <button><img src="./img/icon/dl.svg"  alt="Download file"/></button> @*File download*@
+    <button><img src="./img/icon/dlall.svg"  alt="Download All file"/></button> @*All file download*@
+    <button><span class="oi" data-glyph="cloud-upload"></span></button> @*Save on local storage*@
 </section>
 <FileDropZone>
-    <InputFile OnChange="OnInputFileChange" />
+    <InputFile id="file_input" OnChange="OnInputFileChange" />
     @foreach (var file in this.Files)
     {
         <div @key="file.Id">
             <button @onclick="() => InvokeFileOpener(file)">@file.Name</button>
-            <button @onclick="() => OnClickRemove(file)">削除</button>
+            <button @onclick="() => OnClickRemove(file)"><span class="oi" data-glyph="trash"></span></button>
         </div>
     }
 </FileDropZone>
@@ -42,7 +42,7 @@
                 , "/" + args.File.Name
                 , true
                 , args.File.Name);
-            FileAgent.AppendFile(file);
+            await FileAgent.AppendFile(file);
         }catch(IOException ex)
         {
             Console.Error.WriteLine("File size is too big.\n"+ex.Message);
@@ -68,5 +68,19 @@
         {
             item(index);
         }  
+    }
+
+    private async Task AddFile()
+    {
+        Console.WriteLine("Add File");
+        var file = new FileCapsule(
+            new MemoryStream()
+            , "/NewFile"
+            , true
+            , "NewFile"
+            ,System.Text.Encoding.UTF8);
+        await FileAgent.AppendFile(file);
+            Files.Add(new FileObject() { Id = Guid.NewGuid(), Name = file.Name, Path = file.Path });
+        StateHasChanged();
     }
 }

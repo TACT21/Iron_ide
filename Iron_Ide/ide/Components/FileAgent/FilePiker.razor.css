@@ -1,0 +1,17 @@
+﻿.comand_pallet{
+	display:flex;
+	justify-content:space-around;
+	height:2rem
+}
+
+.comand_pallet *{
+	width:2rem;
+	height:2rem;
+	font-size:2rem;
+	margin:0;
+	padding:0;
+}
+
+#file_input{
+	opacity:0;
+}

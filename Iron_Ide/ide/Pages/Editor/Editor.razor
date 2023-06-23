@@ -1,88 +1,59 @@
-﻿@page "/editor"
+﻿@page "/"
+@page "/editor"
 
-@using BlazorMonaco
-@using BlazorMonaco.Editor
-@using BlazorMonaco.Languages
 @using ide.Components.FileAgent
+
+@inject IJSRuntime jsRuntime
 
 <main>
     <FilePiker @ref="_File" />
-    <StandaloneCodeEditor @ref="@_editor" Id="my-editor-instance-id" ConstructionOptions="EditorConstructionOptions" OnDidInit="EditorOnDidInit" />
+    <div id="editor" style="height: 600px"></div>
 </main>
 
-<style>
-    .decorationContentClass{
-        height:100vh;
-    }
-</style>
 
 @code {
-    private StandaloneCodeEditor _editor = null!;
     private FilePiker _File = null!;
     private FileCapsule capsule = null!;
-    private int CullentNumber = 0;
+    private int CurrentNumber = 0;
     private string[] decorationIds = new string[0];
+    private IJSObjectReference module;
 
-    private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        return new StandaloneEditorConstructionOptions
+        if (firstRender)
         {
-                Language = "python",
-                GlyphMargin = true,
-                Value = string.Empty
-        };
-    }
-
-    private async Task EditorOnDidInit()
-    {
-        Console.WriteLine("Init");
-        await _editor.AddCommand((int)KeyMod.CtrlCmd | (int)KeyCode.KeyH, (args) =>
-        {
-            Console.WriteLine("Ctrl+H : Initial editor command is triggered.");
-        });
-
-        var newDecorations = new ModelDeltaDecoration[]
-        {
-            new ModelDeltaDecoration
-            {
-                
-                Range = new BlazorMonaco.Range(3,1,3,1),
-                Options = new ModelDecorationOptions
-                {
-                    IsWholeLine = true,
-                    ClassName = "decorationContentClass",
-                    GlyphMarginClassName = "decorationGlyphMarginClass"
-                }
-            }
-        };
-
-        decorationIds = await _editor.DeltaDecorations(null, newDecorations);
-        // You can now use 'decorationIds' to change or remove the decorations
+            await jsRuntime.InvokeVoidAsync("AceInit",new string[]{"editor"});
+        }
     }
 
     public async Task<string> GetValue()
     {
-        var result = await _editor.GetValue();
+        var result = await jsRuntime.InvokeAsync<string>("AceGetValue");
         return result;
+    }
+
+    public async Task SetValue(string value)
+    {
+        await jsRuntime.InvokeVoidAsync("AceSetValue",new string[]{value});
     }
 
     public async Task ChengeEditing(int index)
     {
         var context = await GetValue();
-        lock (FileAgent.LockObjects[CullentNumber])
+        lock (FileAgent.LockObjects[CurrentNumber])
         {
-            FileAgent.capsules[CullentNumber].File.SetLength(0);
-            FileAgent.capsules[CullentNumber].File.Write(
-                FileAgent.capsules[CullentNumber].Encoding.GetBytes(context)
+            FileAgent.capsules[CurrentNumber].File.SetLength(0);
+            FileAgent.capsules[CurrentNumber].File.Write(
+                FileAgent.capsules[CurrentNumber].Encoding.GetBytes(context)
             );
         }
-        CullentNumber = index;
-        var content = new byte[FileAgent.capsules[CullentNumber].File.Length];
-        lock (FileAgent.LockObjects[CullentNumber])
+        CurrentNumber = index;
+        var content = new byte[FileAgent.capsules[CurrentNumber].File.Length];
+        lock (FileAgent.LockObjects[CurrentNumber])
         {
-            FileAgent.capsules[CullentNumber].File.Read(content,0,content.Length);
+            FileAgent.capsules[CurrentNumber].File.Read(content,0,content.Length);
         }
-        await _editor.SetValue(FileAgent.capsules[CullentNumber].Encoding.GetString(content));
+        await SetValue(FileAgent.capsules[CurrentNumber].Encoding.GetString(content));
         StateHasChanged();
     }
 
