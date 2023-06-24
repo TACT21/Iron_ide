@@ -1,22 +1,31 @@
 ﻿@using Toolbelt.Blazor.FileDropZone
 
-<section class="comand_pallet">
-    <button @onclick="AddFile"><span class="oi" data-glyph="plus"></span></button> @*New file*@
-    <label for="file_input"><span class="oi" data-glyph="data-transfer-upload"></span></label> @*File upload*@
-    <button><img src="./img/icon/dl.svg"  alt="Download file"/></button> @*File download*@
-    <button><img src="./img/icon/dlall.svg"  alt="Download All file"/></button> @*All file download*@
-    <button><span class="oi" data-glyph="cloud-upload"></span></button> @*Save on local storage*@
+<section>
+    <article class="btns">
+        <button id="add_file" @onclick="AddFile"><span class="oi" data-glyph="plus"></span></button> @*New file*@
+        <button id="dl"><img src="./img/icon/dl.svg" alt="Download file" /></button> @*File download*@
+        <button id="dl_all"><img src="./img/icon/dlall.svg" alt="Download All file" /></button> @*All file download*@
+        <button id="save_storage"><span class="oi" data-glyph="cloud-upload"></span></button> @*Save on local storage*@
+    </article>
+    <article class="comand_pallet">
+        <label for="add_file"><span class="oi" data-glyph="plus"></span></label> @*New file*@
+        <label for="file_input"><span class="oi" data-glyph="data-transfer-upload"></span></label> @*File upload*@
+        <label for="dl"><img src="./img/icon/dl.svg" alt="Download file" /></label> @*File download*@
+        <label for="dl_all"><img src="./img/icon/dlall.svg" alt="Download All file" /></label> @*All file download*@
+        <label for="save_storage"><span class="oi" data-glyph="cloud-upload"></span></label> @*Save on local storage*@
+    </article>
+    <FileDropZone>
+        <InputFile id="file_input" OnChange="OnInputFileChange" />
+        @foreach (var file in this.Files)
+        {
+            <div @key="file.Id">
+                <button @onclick="() => InvokeFileOpener(file)">@file.Name</button>
+                <button @onclick="() => OnClickRemove(file)"><span class="oi" data-glyph="trash"></span></button>
+            </div>
+        }
+    </FileDropZone>
 </section>
-<FileDropZone>
-    <InputFile id="file_input" OnChange="OnInputFileChange" />
-    @foreach (var file in this.Files)
-    {
-        <div @key="file.Id">
-            <button @onclick="() => InvokeFileOpener(file)">@file.Name</button>
-            <button @onclick="() => OnClickRemove(file)"><span class="oi" data-glyph="trash"></span></button>
-        </div>
-    }
-</FileDropZone>
+
 <section style="@(HasError?"display:blocked":"display:none")">
     <p>ファイルサイズが大きすぎます。5MB以下に調節してください。</p>
 </section>
@@ -24,7 +33,7 @@
 @code{
     bool HasError = false;
     List<FileObject> Files = new();
-    List<Func<int,Task>> Openers = new();
+    public List<Func<int,Task>> Openers = new();
 
     private class FileObject
     {
@@ -80,7 +89,7 @@
             , "NewFile"
             ,System.Text.Encoding.UTF8);
         await FileAgent.AppendFile(file);
-            Files.Add(new FileObject() { Id = Guid.NewGuid(), Name = file.Name, Path = file.Path });
+        Files.Add(new FileObject() { Id = Guid.NewGuid(), Name = file.Name, Path = file.Path });
         StateHasChanged();
     }
 }

@@ -7,12 +7,10 @@ namespace ide.Components.FileAgent
 {
     public static class FileAgent
     {
-        public static List<FileCapsule> capsules { private set; get; } = new List<FileCapsule>() ;
-        public static List<object> LockObjects { private set; get; } = new List<object>();
+        private static List<FileCapsule> capsules { private set; get; } = new List<FileCapsule>() ;
         public static async Task AppendFile(FileCapsule file)
         {
             capsules.Add(file);
-            LockObjects.Add(new Object());
         }
 
         public async static Task<List<string>> GetPaths()
@@ -38,6 +36,23 @@ namespace ide.Components.FileAgent
 
     static class FileAgentSettings { 
         
+    }
+
+    public class FileCapsuleSerializeAgent
+    {
+        public string Name { get; private set; }
+        public string MetaType { get; private set; }
+        public string Content { get; private set; }
+        public int Encoding { get; private set; }
+        public string Path { get; private set; }
+        public void ValueSet(FileCapsule file)
+        {
+            Name = file.Name;
+            MetaType = file.MetaType;
+            Path = file.Path;
+            Encoding = file.Encoding.CodePage;
+            Content = file.File
+        }
     }
 
     public class FileCapsule

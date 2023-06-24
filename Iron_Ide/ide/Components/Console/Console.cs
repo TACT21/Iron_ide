@@ -7,10 +7,9 @@ namespace ide.Components.Editor
 {
     public class VirtualConsoleManager : ComponentBase
     {
-        [Parameter]
         public string Script { get; set; } = string.Empty;
         [Inject]
-        protected IJSInProcessRuntime JSRuntime { set; get; }
+        protected IJSRuntime JSRuntime { set; get; }
         [Inject]
         protected IWorkerFactory WorkerFactory { set; get; }
         /// <summary>
@@ -26,14 +25,14 @@ namespace ide.Components.Editor
         public string ConsoleAsk { get; set; } = string.Empty;
         private string WaitingReading = string.Empty;
         public bool IsAsking { get; set; } = false;
-        public async void Running()
+        public async Task Running()
         {
             var engine = new Initializer();
             var write = WriteConsole;
             var read = ReadConsole;
             funcs.AddLast(("WriteLine", "print", write));
             funcs.AddLast(("ReadLine", "input", read));
-            await engine.Initialize(WorkerFactory, funcs, JSRuntime, Script);
+            await engine.Initialize(WorkerFactory, funcs, ((IJSInProcessRuntime)JSRuntime), Script);
         }
         public void WriteConsole(string[] args)
         {
