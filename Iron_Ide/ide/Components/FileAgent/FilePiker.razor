@@ -1,5 +1,7 @@
 ﻿@using Toolbelt.Blazor.FileDropZone
 
+@inject IJSRuntime jSRuntime
+
 <section>
     <article class="btns">
         <button id="add_file" @onclick="AddFile"><span class="oi" data-glyph="plus"></span></button> @*New file*@
@@ -33,7 +35,9 @@
 @code{
     bool HasError = false;
     List<FileObject> Files = new();
-    public List<Func<int,Task>> Openers = new();
+    private int Current = 0;
+    public Func<string,Task> Opener = null!;
+    public Func<Task<string>> Reader = null!;
 
     private class FileObject
     {
@@ -44,25 +48,16 @@
 
     private async Task OnInputFileChange(InputFileChangeEventArgs args)
     {
-        try
-        {
-            var file = new FileCapsule(
-                args.File.OpenReadStream(((long)(5120000))) //5MB
+        var fileSA = new FileCapsuleSerializeAgent();
+        var fo = new FileObject();
+        fo.Id = Guid.NewGuid();
+        fo.Name = args.File.Name;
+        fo.Path = "/" + args.File.Name;
+        await fileSA.ValueSetAsync(args.File.OpenReadStream(((long)(5120000))) //5MB
                 , "/" + args.File.Name
-                , true
                 , args.File.Name);
-            await FileAgent.AppendFile(file);
-        }catch(IOException ex)
-        {
-            Console.Error.WriteLine("File size is too big.\n"+ex.Message);
-        }catch
-        {
-            throw;
-        }
-        foreach (var item in FileAgent.capsules)
-        {
-            Files.Add(new FileObject() { Id = Guid.NewGuid(), Name = item.Name, Path = item.Path });
-        }
+        await jSRuntime.InvokeVoidAsync("SessionStorageWrite",new string[]{fo.Id.ToString(),await fileSA.SerializeAsync()});
+        Files.Add(fo);
     }
 
     private void OnClickRemove(FileObject file)
@@ -70,13 +65,35 @@
         this.Files.Remove(file);
     }
 
-    private void InvokeFileOpener(FileObject file)
+    private async void InvokeFileOpener(FileObject file)
     {
         var index = this.Files.IndexOf(file);
-        foreach (var item in Openers)
+        if(Current != index)
         {
-            item(index);
-        }  
+            var fileSA = new FileCapsuleSerializeAgent();
+            var streamGeter = Reader();
+            var rawContent = jSRuntime.InvokeAsync<string>("SessionStorageRead",new string[]{Files[Current].Id.ToString()});
+            var task = jSRuntime.InvokeAsync<string>("SessionStorageRead",new string[]{Files[index].Id.ToString()});
+            await fileSA.DeserializeAsync(await rawContent);
+            using(MemoryStream ms = new())
+            {
+                await ms.WriteAsync(System.Text.Encoding.GetEncoding(fileSA.Encoding).GetBytes(await streamGeter));
+                await fileSA.ValueSetAsync(
+                    ms,
+                    fileSA.Path,
+                    fileSA.Name,
+                    System.Text.Encoding.GetEncoding(fileSA.Encoding)
+                );
+            }
+            var Writetask = jSRuntime.InvokeAsync<string>(
+                "SessionStorageWrite",
+                new string[]{
+                    Files[Current].Id.ToString(),
+                    await fileSA.SerializeAsync()});
+            Current = index;
+            await fileSA.DeserializeAsync(await task);
+            var nowait = Opener(fileSA.Content);
+        }
     }
 
     private async Task AddFile()
@@ -91,5 +108,10 @@
         await FileAgent.AppendFile(file);
         Files.Add(new FileObject() { Id = Guid.NewGuid(), Name = file.Name, Path = file.Path });
         StateHasChanged();
+    }
+
+    private async Task OnChengeFile(int index)
+    {
+        
     }
 }

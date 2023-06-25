@@ -30,7 +30,8 @@
     {
         if (firstRender)
         {
-            _File.Openers.Add(ChengeEditing);
+            _File.Opener = SetValue;
+            _File.Reader = GetValue;
             await jsRuntime.InvokeVoidAsync("AceInit",new string[]{"editor"});
         }
     }
@@ -53,25 +54,4 @@
         console.Script = await GetValue();
         await console.Running();
     }
-
-    public async Task ChengeEditing(int index)
-    {
-        var context = await GetValue();
-        lock (FileAgent.LockObjects[CurrentNumber])
-        {
-            FileAgent.capsules[CurrentNumber].File.SetLength(0);
-            FileAgent.capsules[CurrentNumber].File.Write(
-                FileAgent.capsules[CurrentNumber].Encoding.GetBytes(context)
-            );
-        }
-        CurrentNumber = index;
-        var content = new byte[FileAgent.capsules[CurrentNumber].File.Length];
-        lock (FileAgent.LockObjects[CurrentNumber])
-        {
-            FileAgent.capsules[CurrentNumber].File.Read(content,0,content.Length);
-        }
-        await SetValue(FileAgent.capsules[CurrentNumber].Encoding.GetString(content));
-        StateHasChanged();
-    }
-
 }
