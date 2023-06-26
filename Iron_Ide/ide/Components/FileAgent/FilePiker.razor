@@ -48,12 +48,16 @@
 
     private async Task OnInputFileChange(InputFileChangeEventArgs args)
     {
+        var stream = args.File.OpenReadStream((long)(5120000));// 5MB
+        var content = new byte[stream.Length];
+        var task = stream.ReadAsync(content, 0, content.Length);
         var fileSA = new FileCapsuleSerializeAgent();
         var fo = new FileObject();
         fo.Id = Guid.NewGuid();
         fo.Name = args.File.Name;
         fo.Path = "/" + args.File.Name;
-        await fileSA.ValueSetAsync(args.File.OpenReadStream(((long)(5120000))) //5MB
+        await task;
+        await fileSA.ValueSetAsync(content //5MB
                 , "/" + args.File.Name
                 , args.File.Name);
         await jSRuntime.InvokeVoidAsync("SessionStorageWrite",new string[]{fo.Id.ToString(),await fileSA.SerializeAsync()});
@@ -68,6 +72,7 @@
     private async void InvokeFileOpener(FileObject file)
     {
         var index = this.Files.IndexOf(file);
+        Console.WriteLine("chenging docment:{0} to {1} \n @FilePiker.cs InvokeFileOpener", Files[Current].Id.ToString(), Files[index].Id.ToString());
         if(Current != index)
         {
             var fileSA = new FileCapsuleSerializeAgent();
@@ -77,21 +82,22 @@
             await fileSA.DeserializeAsync(await rawContent);
             using(MemoryStream ms = new())
             {
-                await ms.WriteAsync(System.Text.Encoding.GetEncoding(fileSA.Encoding).GetBytes(await streamGeter));
                 await fileSA.ValueSetAsync(
-                    ms,
+                    System.Text.Encoding.GetEncoding(fileSA.Encoding).GetBytes(await streamGeter),
                     fileSA.Path,
                     fileSA.Name,
                     System.Text.Encoding.GetEncoding(fileSA.Encoding)
                 );
             }
+            var a = fileSA.Serialize();
+            Console.WriteLine(a+"@@@");
             var Writetask = jSRuntime.InvokeAsync<string>(
                 "SessionStorageWrite",
                 new string[]{
                     Files[Current].Id.ToString(),
-                    await fileSA.SerializeAsync()});
+                    a});
             Current = index;
-            await fileSA.DeserializeAsync(await task);
+            fileSA.Deserialize(await task);
             var nowait = Opener(fileSA.Content);
         }
     }

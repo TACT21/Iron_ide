@@ -39,13 +39,11 @@
     public async Task<string> GetValue()
     {
         var result = await jsRuntime.InvokeAsync<string>("AceGetValue");
-        Console.WriteLine(result);
         return result;
     }
 
     public async Task SetValue(string value)
     {
-        Console.WriteLine(value);
         await jsRuntime.InvokeVoidAsync("AceSetValue",new string[]{value});
     }
 

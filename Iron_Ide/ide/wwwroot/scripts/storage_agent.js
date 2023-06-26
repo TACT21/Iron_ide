@@ -1,8 +1,9 @@
 function SessionStorageWrite(key, value) {
-    if (value = "") {
+    if (value === "") {
         sessionStorage.removeItem(key);
     } else {
-        sessionStorage.setItem(key, value);
+        console.log(value + "\n@storage_agent.js SessionStorageWrite");
+        sessionStorage.setItem(key, String(value));
     }
 }
 

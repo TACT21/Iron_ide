@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Text.Unicode;
 using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ide.Components.FileAgent
 {
@@ -58,7 +59,7 @@ namespace ide.Components.FileAgent
             Content = file.Encoding.GetString(contentArray);
         }
 
-        public async Task ValueSetAsync(FileCapsule file)
+        public async Task ValueSetAsync(FileCapsule file, bool dispose = true)
         {
             var contentArray = new byte[file.File.Length];
             var task = file.File.ReadAsync(contentArray, 0, contentArray.Length);
@@ -68,18 +69,19 @@ namespace ide.Components.FileAgent
             Encoding = file.Encoding.CodePage;
             await task;
             Content = file.Encoding.GetString(contentArray);
+            if (dispose)
+            {
+                file.File.Dispose();
+            }
         }
 
-        public async Task ValueSetAsync(Stream stream, string path, string? name = default, Encoding? encoding = null)
+        public async Task ValueSetAsync(byte[] content, string path, string? name = default, Encoding? encoding = null)
         {
-            var content = new byte[stream.Length];
-            var task = stream.ReadAsync(content, 0, content.Length);
             encoding = encoding != null? encoding : System.Text.Encoding.UTF8;
             Name = name;
             MetaType = "";
             Path = path;
             Encoding = encoding.CodePage;
-            await task;
             Content = encoding.GetString(content);
         }
         public string Serialize()
@@ -96,21 +98,39 @@ namespace ide.Components.FileAgent
                 var contentArray = new byte[ms.Length];
                 await ms.ReadAsync(contentArray, 0, contentArray.Length);
                 result  = UTF8Encoding.UTF8.GetString(contentArray);
+                System.Console.WriteLine(result + "@FileAgent.cs SerializeAsync");
             }
             return result;
         }
 
         public void Deserialize(string target)
         {
-            JsonSerializer.Deserialize(target, this.GetType());
+            JsonSerializer.Deserialize<FileCapsuleSerializeAgent>(target);
         }
 
         public async Task DeserializeAsync(string target)
         {
-            using (MemoryStream ms = new())
+            target = target != null ? target : String.Empty;
+            if(target != String.Empty)
             {
-                await ms.WriteAsync(UTF8Encoding.UTF8.GetBytes(target));
-                await JsonSerializer.DeserializeAsync(ms, this.GetType());
+                try
+                {
+                    System.Console.WriteLine(target + "@DeserializeAsync");
+                    using (MemoryStream ms = new())
+                    {
+                        await ms.WriteAsync(UTF8Encoding.UTF8.GetBytes(target));
+                        await JsonSerializer.DeserializeAsync<FileCapsuleSerializeAgent>(ms);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine(ex.Message);
+                    this.ValueSet(new FileCapsule());
+                }
+            }
+            else
+            {
+                this.ValueSet(new FileCapsule());
             }
         }
     }
@@ -122,7 +142,14 @@ namespace ide.Components.FileAgent
         public FileStream File { get; set; }
         public Encoding Encoding { get; set; }
         public string Path { get; set; }
-
+        public FileCapsule()
+        {
+            Name = String.Empty;
+            MetaType = String.Empty;
+            Encoding = Encoding.UTF8;
+            Path = String.Empty;
+            File = new FileStream(Guid.NewGuid().ToString(),FileMode.CreateNew);
+        }
         public FileCapsule(Stream stream,string path, bool isDispose = true,string? name = default,Encoding? encoding = null)
         {
             if(encoding == null)
