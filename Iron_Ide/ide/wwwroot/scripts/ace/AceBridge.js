@@ -1,4 +1,6 @@
 ﻿var editor;
+
+console.log("Load AceBridge")
 function AceInit(id) {
     editor = ace.edit(id);
     editor.$blockScrolling = Infinity;
@@ -15,6 +17,7 @@ function AceGetValue() {
     return editor.getValue();
 }
 
-function AceSetValue (e) {
-    editor.setValue(e);
+function AceSetValue(e) {
+    console.log(e + "\n@Ace.js AceSetValue");
+    editor.getSession().setValue(e);
 }

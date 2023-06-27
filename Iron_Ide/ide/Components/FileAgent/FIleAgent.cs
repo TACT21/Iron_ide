@@ -105,7 +105,16 @@ namespace ide.Components.FileAgent
 
         public void Deserialize(string target)
         {
-            JsonSerializer.Deserialize<FileCapsuleSerializeAgent>(target);
+            target = target != null ? target : String.Empty;
+            try
+            {
+                JsonSerializer.Deserialize<FileCapsuleSerializeAgent>(target);
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex.Message);
+                this.ValueSet(new FileCapsule());
+            }
         }
 
         public async Task DeserializeAsync(string target)

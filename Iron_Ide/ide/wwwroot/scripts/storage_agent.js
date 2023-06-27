@@ -8,5 +8,6 @@ function SessionStorageWrite(key, value) {
 }
 
 function SessionStorageRead(key) {
+    console.log(sessionStorage.getItem(key) + "\n@storage_agent.js SessionStorageRead");
     return sessionStorage.getItem(key);
 }

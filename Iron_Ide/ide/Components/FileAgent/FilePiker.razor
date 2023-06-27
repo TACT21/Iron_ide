@@ -77,8 +77,8 @@
         {
             var fileSA = new FileCapsuleSerializeAgent();
             var streamGeter = Reader();
-            var rawContent = jSRuntime.InvokeAsync<string>("SessionStorageRead",new string[]{Files[Current].Id.ToString()});
-            var task = jSRuntime.InvokeAsync<string>("SessionStorageRead",new string[]{Files[index].Id.ToString()});
+            var rawContent = jSRuntime.InvokeAsync<string>("SessionStorageRead", new string[] { Files[Current].Id.ToString() });
+            var task = jSRuntime.InvokeAsync<string>("SessionStorageRead", new string[] { Files[index].Id.ToString() });
             await fileSA.DeserializeAsync(await rawContent);
             using(MemoryStream ms = new())
             {

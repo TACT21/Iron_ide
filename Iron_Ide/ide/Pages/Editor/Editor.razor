@@ -44,6 +44,7 @@
 
     public async Task SetValue(string value)
     {
+        Console.WriteLine("{0} @Editor.razor SetValue",value);
         await jsRuntime.InvokeVoidAsync("AceSetValue",new string[]{value});
     }
 
