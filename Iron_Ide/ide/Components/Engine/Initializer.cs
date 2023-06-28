@@ -12,7 +12,7 @@ namespace ide.Components.Engine
 {
     public class Initializer : IDisposable
     {
-        Dictionary<string, dynamic> _Funcs;
+        Dictionary<string, dynamic> _Funcs = new();
         IJSRuntime JSRuntime;
         IWorkerBackgroundService<Core>? service;
         //NetworkStreamに変更の検討
@@ -26,13 +26,14 @@ namespace ide.Components.Engine
             {
                 _Funcs.Add(item.Item1, item.Item3);
             }
+            var funcsRelay = funcs.ToArray(); 
             this.JSRuntime = JSRuntime;
             // Create worker.
             var worker = await workerFactory.CreateAsync();
             // Create service reference. For most scenarios, it's safe (and best) to keep this 
             // reference around somewhere to avoid the startup cost.
             this.service = await worker.CreateBackgroundServiceAsync<Core>();
-            await service.RunAsync(s => s.Initializer(funcs, JSRuntime, assemblies));
+            await service.RunAsync(s => s.Initializer(funcsRelay, JSRuntime, assemblies));
             var result = await service.RunAsync(s => s.Ignition(script, false));
         }
         public async Task Bowling()

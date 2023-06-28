@@ -134,7 +134,7 @@ namespace ide.Components.Engine
         /// <param name="Funcs">JSRuntime</param>
         /// <param name="JSRuntime">Funcs (Allow default)</param>
         /// <param name="assemblies">assemblies (Allow default)</param>
-        public void Initializer(LinkedList<(string, string, object)> Funcs, IJSInProcessRuntime JSRuntime,List<Assembly> assemblies)
+        public void Initializer((string, string, object)[] Funcs, IJSInProcessRuntime JSRuntime,List<Assembly> assemblies)
         {
             if (IsRunning)
             {

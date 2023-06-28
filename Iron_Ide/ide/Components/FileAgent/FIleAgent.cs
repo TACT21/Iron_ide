@@ -43,11 +43,11 @@ namespace ide.Components.FileAgent
 
     public class FileCapsuleSerializeAgent
     {
-        public string Name { get; private set; }
-        public string MetaType { get; private set; }
-        public string Content { get; private set; }
-        public int Encoding { get; private set; }
-        public string Path { get; private set; }
+        public string Name { get; set; }
+        public string MetaType { get; set; }
+        public string Content { get; set; }
+        public int Encoding { get; set; }
+        public string Path { get; set; }
         public void ValueSet(FileCapsule file)
         {
             Name = file.Name;
@@ -82,7 +82,7 @@ namespace ide.Components.FileAgent
             MetaType = "";
             Path = path;
             Encoding = encoding.CodePage;
-            Content = encoding.GetString(content);
+            Content = System.Text.Encoding.UTF8.GetString(content);
         }
         public string Serialize()
         {
@@ -108,7 +108,15 @@ namespace ide.Components.FileAgent
             target = target != null ? target : String.Empty;
             try
             {
-                JsonSerializer.Deserialize<FileCapsuleSerializeAgent>(target);
+                var a = JsonSerializer.Deserialize<FileCapsuleSerializeAgent>(target);
+                if(a != null)
+                {
+                    this.Content = a.Content;
+                    this.Name = a.Name;
+                    this.MetaType = a.MetaType;
+                    this.Path = a.Path;
+                    this.Encoding = a.Encoding;
+                }
             }
             catch (Exception ex)
             {
@@ -128,7 +136,15 @@ namespace ide.Components.FileAgent
                     using (MemoryStream ms = new())
                     {
                         await ms.WriteAsync(UTF8Encoding.UTF8.GetBytes(target));
-                        await JsonSerializer.DeserializeAsync<FileCapsuleSerializeAgent>(ms);
+                        var a = await JsonSerializer.DeserializeAsync<FileCapsuleSerializeAgent>(ms);
+                        if (a != null)
+                        {
+                            this.Content = a.Content;
+                            this.Name = a.Name;
+                            this.MetaType = a.MetaType;
+                            this.Path = a.Path;
+                            this.Encoding = a.Encoding;
+                        }
                     }
                 }
                 catch (Exception ex)

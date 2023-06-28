@@ -57,11 +57,13 @@
         fo.Name = args.File.Name;
         fo.Path = "/" + args.File.Name;
         await task;
+        Console.WriteLine(System.Text.Encoding.UTF8.GetString(content));
         await fileSA.ValueSetAsync(content //5MB
                 , "/" + args.File.Name
                 , args.File.Name);
-        await jSRuntime.InvokeVoidAsync("SessionStorageWrite",new string[]{fo.Id.ToString(),await fileSA.SerializeAsync()});
+        await jSRuntime.InvokeVoidAsync("SessionStorageWrite",new string[]{fo.Id.ToString(),fileSA.Serialize()});
         Files.Add(fo);
+        Opener(fileSA.Content);
     }
 
     private void OnClickRemove(FileObject file)
