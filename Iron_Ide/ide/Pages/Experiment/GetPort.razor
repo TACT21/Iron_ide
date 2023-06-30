@@ -1,0 +1,18 @@
+﻿@page "/Experiment/Port"
+<h3>GetPOrt</h3>
+<button>DO</button>
+@name 
+
+@code {
+    string name = "";
+    private void GetPots()
+    {
+        var ipGlobalProp = System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+        var usedPorts = ipGlobalProp.GetActiveTcpConnections();
+        foreach (var ports in usedPorts)
+        {
+            Console.WriteLine(ports.LocalEndPoint.Port);
+            name += (ports.LocalEndPoint.Port +"\n"); //使用中のポートを列挙
+        }
+    }
+}

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
-
+using BlazorWorker.Core.CoreInstanceService;
 
 namespace ide.Components.Engine
 {
@@ -15,6 +15,8 @@ namespace ide.Components.Engine
         Dictionary<string, dynamic> _Funcs = new();
         IJSRuntime JSRuntime;
         IWorkerBackgroundService<Core>? service;
+        IInstanceHandle handle;
+        IWorker worker;
         //NetworkStreamに変更の検討
         public async Task Initialize(IWorkerFactory workerFactory, LinkedList<(string, string, dynamic)> funcs, IJSInProcessRuntime JSRuntime, string script, List<Assembly>? assemblies = default)
         {
@@ -28,14 +30,36 @@ namespace ide.Components.Engine
             }
             var funcsRelay = funcs.ToArray(); 
             this.JSRuntime = JSRuntime;
-            // Create worker.
-            var worker = await workerFactory.CreateAsync();
-            // Create service reference. For most scenarios, it's safe (and best) to keep this 
-            // reference around somewhere to avoid the startup cost.
-            this.service = await worker.CreateBackgroundServiceAsync<Core>();
-            await service.RunAsync(s => s.Initializer(funcsRelay, JSRuntime, assemblies));
-            var result = await service.RunAsync(s => s.Ignition(script, false));
+            if(worker == null)
+            {
+                // Create worker.
+                this.worker = await workerFactory.CreateAsync();
+                worker.IncomingMessage += this.OnWorkerMessage;
+            }
+            if(handle == null)
+            {
+                // Create service reference. For most scenarios, it's safe (and best) to keep this 
+                // reference around somewhere to avoid the startup cost.
+                this.handle = await worker.CreateCoreInstanceService().CreateInstance<Core>(options =>
+                        options.AddConventionalAssemblyOfService()
+#if NET5_0_OR_GREATER
+                            .AddAssemblies("System.Text.RegularExpressions.dll")
+                            .AddAssemblies("IronPython.dll")
+                            .AddAssemblies("IronPython.Modules.dll")
+                            .AddAssemblies("IronPython.SQLite.dll")
+                            .AddAssemblies("IronPython.Wpf.dll")
+#endif
+                );
+            }
+
+            await worker.PostMessageAsync($"Ignition");
         }
+
+        public void OnWorkerMessage(object sender, string message)
+        {
+
+        }
+
         public async Task Bowling()
         {
             while (true)
