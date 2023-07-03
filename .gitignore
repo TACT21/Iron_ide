@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 /Iron_Ide/TEst/
 /Iron_Ide/ide/appsettings.json
+/Iron_Ide/IronIde/bin

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -24,6 +25,7 @@ namespace IronIde.Components
         }
         public void Ignition(string script,bool Recycle = false)
         {
+            Console.WriteLine($"Ignition at thread #{Thread.CurrentThread.ManagedThreadId}");
             //スクリプト成形
             foreach (var item in settings.EventName.Keys)
             {
@@ -73,9 +75,9 @@ namespace IronIde.Components
     {
         public List<Assembly> Assemblies { set; get; } = new();
         /// <summary>
-        /// 代替対象関数名,戻り値のセット
+        /// 代替対象関数名セット
         /// </summary>
-        public Dictionary<string, string> EventName = new();
+        public LinkedList<string> EventName = new();
     }
 
     public static class EngineBridge
@@ -96,23 +98,33 @@ namespace IronIde.Components
         public object[] args { set; get; } = null;
     }
 
+    public class ResultCapule
+    {
+        private string type= string.Empty;
+        private string resultJson = string.Empty;
+        public void SetValue(dynamic value)
+        {
+            resultJson = JsonSerializer.Serialize(value, value.GetType());
+            type = value.GetType().FullName;
+        }
+        public dynamic GetValue()
+        {
+            return JsonSerializer.Deserialize(resultJson, Type.GetType(type));
+        }
+    }
+
     class IronUtility
     {
-        public Dictionary<string, string> EventName = new();
         public uint waitingSec = 0;
         public dynamic? DoTask(string name, object[] args)
         {
             FuncCapsule capsule = new FuncCapsule() { args = args, name = name };
             EngineBridge.Bridge.Write(
                 EngineBridge.StandardEncoding.GetBytes(
-                    System.Text.Json.JsonSerializer.Serialize<FuncCapsule>(capsule)
+                    JsonSerializer.Serialize<FuncCapsule>(capsule)
                 )
             );
             EngineBridge.from = EngineBridge.From.Engine;
-            if (EventName[name] == string.Empty)
-            {
-                return null;
-            }
             Thread.Sleep(1000);
             string json = "";
             lock (EngineBridge.BridgeLocker)
@@ -121,7 +133,7 @@ namespace IronIde.Components
                 EngineBridge.Bridge.Read( bytes, 0, bytes.Length );
                 json = EngineBridge.StandardEncoding.GetString(bytes);
             }
-            return System.Text.Json.JsonSerializer.Deserialize(json,Type.GetType(EventName[name]));
+            return JsonSerializer.Deserialize<ResultCapule>(json).GetValue();
         }
     }
 }

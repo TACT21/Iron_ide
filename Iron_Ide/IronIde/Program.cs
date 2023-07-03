@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.JavaScript;
 using System.Threading;
+using System.Threading.Tasks;
 using IronIde.Components;
 
 Console.WriteLine("Hello, Browser!");
@@ -24,17 +26,77 @@ public partial class MyClass
     [JSExport]
     internal static void Ignition()
     {
-        new Thread(SecondThread).Start();
-        Console.WriteLine($"Hello, Browser from the main thread {Thread.CurrentThread.ManagedThreadId}");
-
-        static void SecondThread()
+        //置換対象文字列 ,関数　のセット
+        Dictionary<string, Func< dynamic[],Task <dynamic?>>> funcs = new()
         {
-            Console.WriteLine($"Hello from Thread {Thread.CurrentThread.ManagedThreadId}");
-            for (int i = 0; i < 5; ++i)
+            { "input", InputAgent},
+            { "print",PrintAgent }
+        };
+        EngineSettings settings = new EngineSettings();
+        foreach (var item in funcs.Keys)
+        {
+            settings.EventName.AddLast(item);
+        }
+        var engine = new Engine(settings);
+        var script = GetScript();
+        new Thread(engine.Ignition(script)).Start();
+        Console.WriteLine($"Ignition request has been ordered by thread #{Thread.CurrentThread.ManagedThreadId}");
+    }
+
+    [JSImport("ironPython.getInput", "main.js")]
+    internal static partial string GetInput();
+
+    [JSImport("ironPython.askQuestion", "main.js")]
+    internal static partial void InputInvoke(string a);
+
+    [JSImport("ironPython.addConsole", "main.js")]
+    internal static partial void AddConsole(string a);
+
+    [JSImport("ironPython.clearQuestion", "main.js")]
+    internal static partial void ClearQuestion(string a);
+
+    [JSImport("ironPython.getScript", "main.js")]
+    internal static partial string GetScript();
+
+    public static async Task<dynamic> InputAgent(dynamic[] args)
+    {
+        return ReadInput(args);
+    }
+    public static async Task<string> ReadInput(dynamic[] args,int waitSec = 0)
+    {
+        if(args.Length == 0)
+        {
+            InputInvoke("");
+        }
+        else
+        {
+            var mess = "";
+            foreach (var item in args)
             {
-                Console.WriteLine($"Ping {i}");
-                Thread.Sleep(1000);
+                mess += item.ToString();
+            }
+            InputInvoke(mess);
+        }
+        int i = 0;
+        string result = "";
+        while(i <= waitSec)
+        {
+            i++;
+            await Task.Delay(1000);
+            result = GetInput();
+            if(result != "")
+            {
+                break;
+            }
+            if(waitSec == 0)
+            {
+                i = 0;
             }
         }
+        return result;
+    }
+    public static async Task<dynamic?> PrintAgent(dynamic[] args)
+    {
+
     }
 }
