@@ -23,11 +23,23 @@ namespace IronIde.Components
         {
             this.settings = new EngineSettings();
         }
+
+        public void Ignition(object? script)
+        {
+            if(script != null) {
+                Ignition(((string)script));
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(script));
+            }
+        }
+
         public void Ignition(string script,bool Recycle = false)
         {
             Console.WriteLine($"Ignition at thread #{Thread.CurrentThread.ManagedThreadId}");
             //スクリプト成形
-            foreach (var item in settings.EventName.Keys)
+            foreach (var item in settings.EventName)
             {
                 var regex = "";
                 foreach (var s in item)

@@ -5,6 +5,30 @@ import { dotnet } from './dotnet.js'
 
 var consoleInput = "";
 var orderContent = "";
+var script = "";
+var receve = false;
+
+window.addEventListener('message', function (e) {
+    switch (e.data.action) {
+        case 'GiveScript':
+            script = e.data.message;
+            break;
+            receve = true;
+    }
+});
+
+document.referrer.postMessage({
+    action: 'ReqScript',
+    message: ''
+}, '*',);
+
+while (true) {
+    await sleep(1000);
+    if (receve) {
+        break;
+    }
+}
+
 
 const { setModuleImports, getAssemblyExports, getConfig } = await dotnet
     .withDiagnosticTracing(false)
@@ -24,7 +48,7 @@ setModuleImports('main.js', {
         clearQuestion: (e) => function (e) {
             AddConsole(orderContent + e);
         },
-        getScript: AceGetValue();
+        getScript: () => { return script; }
     }
 });
 
@@ -34,8 +58,14 @@ const exports = await getAssemblyExports(config.mainAssemblyName);
 const text = exports.MyClass.Greeting();
 console.log(text);
 
+exports.MyClass.Ignition();
+
 //document.getElementById('out').innerHTML = text;
 document.getElementById('prompt').style.display = "none";
+
+function Run() {
+    exports.MyClass.Ignition();
+}
 
 await dotnet.run();
 
@@ -58,4 +88,10 @@ function AddConsole(e) {
 function Asq(e) {
     document.getElementById('prompt').style.display = "block";
     document.getElementById('order').innerHTML = e;
+}
+
+function sleep(milliSeconds) {
+    return new Promise((resolve) => {
+        setTimeout(() => resolve(), milliSeconds);
+    });
 }

@@ -13,11 +13,18 @@
     <EmbeddedResource Remove="script\**" />
     <None Remove="script\**" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="index.html" />
+  </ItemGroup>
 
   <ItemGroup>
-    <WasmExtraFilesToDeploy Include="index.html" />
     <WasmExtraFilesToDeploy Include="main.js" />
     <WasmExtraFilesToDeploy Include="ace.js" />
+    <WasmExtraFilesToDeploy Include="*.js" />
+    <WasmExtraFilesToDeploy Include="*.css" />
   </ItemGroup>
 
   <ItemGroup>

@@ -39,7 +39,8 @@ public partial class MyClass
         }
         var engine = new Engine(settings);
         var script = GetScript();
-        new Thread(engine.Ignition(script)).Start();
+        var newThread = new Thread(engine.Ignition);
+        newThread.Start(script);
         Console.WriteLine($"Ignition request has been ordered by thread #{Thread.CurrentThread.ManagedThreadId}");
     }
 
@@ -47,18 +48,18 @@ public partial class MyClass
     internal static partial string GetInput();
 
     [JSImport("ironPython.askQuestion", "main.js")]
-    internal static partial void InputInvoke(string a);
+    internal static partial void InputInvoke(string mess);
 
     [JSImport("ironPython.addConsole", "main.js")]
-    internal static partial void AddConsole(string a);
+    internal static partial void AddConsole(string mess);
 
     [JSImport("ironPython.clearQuestion", "main.js")]
-    internal static partial void ClearQuestion(string a);
+    internal static partial void ClearQuestion(string mess);
 
     [JSImport("ironPython.getScript", "main.js")]
     internal static partial string GetScript();
 
-    public static async Task<dynamic> InputAgent(dynamic[] args)
+    public static async Task<dynamic?> InputAgent(dynamic[] args)
     {
         return ReadInput(args);
     }
@@ -97,6 +98,12 @@ public partial class MyClass
     }
     public static async Task<dynamic?> PrintAgent(dynamic[] args)
     {
-
+        var mess = "";
+        foreach (var item in args)
+        {
+            mess += item.ToString();
+        }
+        AddConsole(mess);
+        return null;
     }
 }
