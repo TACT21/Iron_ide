@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33513.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ide", "ide\ide.csproj", "{1B0B688E-EC01-4B72-BBAA-B34C0ED9818F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronIde", "IronIde\IronIde.csproj", "{F36B0F09-393B-457D-9431-5BE6A18931D9}"
 EndProject
 Global
