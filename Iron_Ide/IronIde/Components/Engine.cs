@@ -61,7 +61,7 @@ namespace IronIde.Components
             Microsoft.Scripting.Hosting.ScriptScope scriptScope;
             Microsoft.Scripting.Hosting.ScriptSource scriptSource;
             var runtime = Python.CreateRuntime();
-            runtime.IO.SetInput(new MemoryStream(), Encoding.Default);
+            runtime.IO.SetInput(new MemoryStream(new byte[]), Encoding.Default);
             scriptEngine = Python.GetEngine(runtime);
             foreach (var assembly in settings.Assemblies)
             {
@@ -102,8 +102,7 @@ namespace IronIde.Components
 
     public static class EngineBridge
     {
-        public static object BridgeLocker { set; get; } = new object();
-        public static MemoryStream Bridge { set; get; }
+        public static MemoryStream Bridge { set; get; } = new MemoryStream(new byte[]);
         public static Encoding StandardEncoding { set; get; } = Encoding.UTF8;
         public static From? from = null;
         public enum From

@@ -24,13 +24,13 @@ public partial class MyClass
     internal static partial string GetHRef();
 
     /// <summary>
-    /// IronPython ‚ğ web assembly ã‚Å“®‚©‚·‚½‚ß‚ÌƒZƒbƒgB
+    /// IronPython ï¿½ï¿½ web assembly ï¿½ï¿½Å“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ÌƒZï¿½bï¿½gï¿½B
     /// </summary>
     [JSExport]
     internal static async Task Ignition()
     {
         new MemoryStream();
-        //’uŠ·‘ÎÛ•¶š—ñ ,ŠÖ”@‚ÌƒZƒbƒg
+        //ï¿½uï¿½ï¿½ï¿½ÎÛ•ï¿½ï¿½ï¿½ï¿½ï¿½ ,ï¿½Öï¿½ï¿½@ï¿½ÌƒZï¿½bï¿½g
         Dictionary<string, Func< dynamic[],Task <dynamic?>>> funcs = new()
         {
             { "input", InputAgent},
@@ -52,13 +52,9 @@ public partial class MyClass
             string json = "";
             if(EngineBridge.from == EngineBridge.From.Engine)
             {
-                EngineBridge.from = EngineBridge.From.Owner;
-                lock (EngineBridge.BridgeLocker)
-                {
-                    var bytes = new byte[EngineBridge.Bridge.Length];
-                    EngineBridge.Bridge.Read(bytes, 0, bytes.Length);
-                    json = EngineBridge.StandardEncoding.GetString(bytes);
-                }
+                var bytes = new byte[EngineBridge.Bridge.Length];
+                EngineBridge.Bridge.Read(bytes, 0, bytes.Length);
+                json = EngineBridge.StandardEncoding.GetString(bytes);
                 var action = JsonSerializer.Deserialize<FuncCapsule>(json);
                 dynamic? result = null;
                 if (action != null)
@@ -72,6 +68,7 @@ public partial class MyClass
                         JsonSerializer.Serialize(capule)
                     )
                 );
+                EngineBridge.from = EngineBridge.From.Owner;
             }
         }
     }
