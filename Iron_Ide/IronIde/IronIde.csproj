@@ -9,11 +9,6 @@
 	<Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="script\**" />
-    <EmbeddedResource Remove="script\**" />
-    <None Remove="script\**" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="index.html" />
   </ItemGroup>
   <ItemGroup>
@@ -22,9 +17,10 @@
 
   <ItemGroup>
     <WasmExtraFilesToDeploy Include="main.js" />
-    <WasmExtraFilesToDeploy Include="ace.js" />
     <WasmExtraFilesToDeploy Include="*.js" />
-    <WasmExtraFilesToDeploy Include="*.css" />
+    <WasmExtraFilesToDeploy Include="Scripts\*.js" />
+    <WasmExtraFilesToDeploy Include="Sytykelee\s*.css" />
+	<WasmExtraFilesToDeploy Include="*.html" />
   </ItemGroup>
 
   <ItemGroup>

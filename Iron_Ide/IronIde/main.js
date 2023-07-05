@@ -12,12 +12,13 @@ window.addEventListener('message', function (e) {
     switch (e.data.action) {
         case 'GiveScript':
             script = e.data.message;
-            break;
             receve = true;
+            break;
     }
 });
+console.log("Request Script")
 
-document.referrer.postMessage({
+window.parent.postMessage({
     action: 'ReqScript',
     message: ''
 }, '*',);
@@ -25,6 +26,7 @@ document.referrer.postMessage({
 while (true) {
     await sleep(1000);
     if (receve) {
+        AddConsole("Script has been posted");
         break;
     }
 }
@@ -57,11 +59,10 @@ const config = getConfig();
 const exports = await getAssemblyExports(config.mainAssemblyName);
 const text = exports.MyClass.Greeting();
 console.log(text);
-
 exports.MyClass.Ignition();
 
 //document.getElementById('out').innerHTML = text;
-document.getElementById('prompt').style.display = "none";
+document.getElementById('input').style.display = "none";
 
 function Run() {
     exports.MyClass.Ignition();
@@ -76,7 +77,7 @@ function GetInput() {
 }
 
 function InputSet() {
-    document.getElementById('prompt').style.display = "none";
+    document.getElementById('input').style.display = "none";
     orderContent = document.getElementById('order').innerText;
     consoleInput = document.getElementById("consoleInput").value
 }
@@ -86,7 +87,7 @@ function AddConsole(e) {
 }
 
 function Asq(e) {
-    document.getElementById('prompt').style.display = "block";
+    document.getElementById('input').style.display = "block";
     document.getElementById('order').innerHTML = e;
 }
 

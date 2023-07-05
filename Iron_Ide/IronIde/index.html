@@ -4,18 +4,24 @@
     <meta charset="utf-8" />
     <title>IronPython</title>
     <script src="ace.js" async></script>
+    <script src="PageCaller.js" async></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
+    <style>
+        iframe{
+            width:90vw;
+            height:300px;
+        }
+    </style>
 </head>
-<body>
-    <div id="main">
-        <section class="Header">
+    <body>
+        <div id="main">
+            <section class="Header">
 
-        </section>
-        <section>
-            <button onclick="Run()">Run</button>
-        </section>
-    </div>
-    <div id="editor" style="height: 600px"></div>
-</body>
+            </section>
+            <section>
+                <button onclick="EngineCall()">Run</button>
+            </section>
+        </div>
+    </body>
 </html>

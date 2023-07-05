@@ -37,7 +37,7 @@ namespace IronIde.Components
 
         public void Ignition(string script,bool Recycle = false)
         {
-            Console.WriteLine($"Ignition at thread #{Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"Making script @ thread #{Thread.CurrentThread.ManagedThreadId}");
             //スクリプト成形
             foreach (var item in settings.EventName)
             {
@@ -55,6 +55,7 @@ namespace IronIde.Components
                     script = script.Replace(aim.Value, "IronPythonUtility.DoTask(" + item + "," + aim.Value.replace(item, "").replace("(", "[").replace(")", "]") + ")");
                 }
             }
+            Console.WriteLine($"Making engine @ thread #{Thread.CurrentThread.ManagedThreadId}");
             //エンジン 作成
             Microsoft.Scripting.Hosting.ScriptEngine scriptEngine;
             Microsoft.Scripting.Hosting.ScriptScope scriptScope;
@@ -69,8 +70,15 @@ namespace IronIde.Components
             scriptScope = scriptEngine.CreateScope();
             scriptSource = scriptEngine.CreateScriptSourceFromString(script);
             var utility = new IronUtility();
+            utility.DoTask("print", new object[] {"IronPython3.4 with Dynamic Language Runtime" });
             scriptScope.SetVariable("IronPythonUtility", utility);
-            scriptSource.Execute(scriptScope);
+            Console.WriteLine($"Ignition @ thread #{Thread.CurrentThread.ManagedThreadId}");
+            try
+            {
+                scriptSource.Execute(scriptScope);
+            }catch (Exception ex) {
+                utility.DoTask("print", new object[] {ex.Message,"\n@",ex.Source, "\n===StackTrace===\n", ex.StackTrace});
+            }
             //後始末
             if (Recycle)
             {
@@ -114,10 +122,17 @@ namespace IronIde.Components
     {
         private string type= string.Empty;
         private string resultJson = string.Empty;
-        public void SetValue(dynamic value)
+        public void SetValue(dynamic? value)
         {
-            resultJson = JsonSerializer.Serialize(value, value.GetType());
-            type = value.GetType().FullName;
+            if (value == null)
+            {
+                type = "System.Object";
+            }
+            else
+            {
+                resultJson = JsonSerializer.Serialize(value, value.GetType());
+                type = value.GetType().FullName;
+            }
         }
         public dynamic GetValue()
         {

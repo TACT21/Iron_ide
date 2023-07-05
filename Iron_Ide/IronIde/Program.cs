@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using IronIde.Components;
@@ -24,8 +27,9 @@ public partial class MyClass
     /// IronPython を web assembly 上で動かすためのセット。
     /// </summary>
     [JSExport]
-    internal static void Ignition()
+    internal static async Task Ignition()
     {
+        new MemoryStream();
         //置換対象文字列 ,関数　のセット
         Dictionary<string, Func< dynamic[],Task <dynamic?>>> funcs = new()
         {
@@ -41,7 +45,35 @@ public partial class MyClass
         var script = GetScript();
         var newThread = new Thread(engine.Ignition);
         newThread.Start(script);
-        Console.WriteLine($"Ignition request has been ordered by thread #{Thread.CurrentThread.ManagedThreadId}");
+        AddConsole($"Ignition request has been ordered by thread #{Thread.CurrentThread.ManagedThreadId}");
+        while (true)
+        {
+            await Task.Delay(500);
+            string json = "";
+            if(EngineBridge.from == EngineBridge.From.Engine)
+            {
+                EngineBridge.from = EngineBridge.From.Owner;
+                lock (EngineBridge.BridgeLocker)
+                {
+                    var bytes = new byte[EngineBridge.Bridge.Length];
+                    EngineBridge.Bridge.Read(bytes, 0, bytes.Length);
+                    json = EngineBridge.StandardEncoding.GetString(bytes);
+                }
+                var action = JsonSerializer.Deserialize<FuncCapsule>(json);
+                dynamic? result = null;
+                if (action != null)
+                {
+                    result = await funcs[action.name](action.args);
+                }
+                ResultCapule capule = new ResultCapule();
+                capule.SetValue(result);
+                EngineBridge.Bridge.Write(
+                    EngineBridge.StandardEncoding.GetBytes(
+                        JsonSerializer.Serialize(capule)
+                    )
+                );
+            }
+        }
     }
 
     [JSImport("ironPython.getInput", "main.js")]
