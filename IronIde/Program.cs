@@ -29,8 +29,6 @@ public partial class MyClass
     [JSExport]
     internal static async Task Ignition()
     {
-        new MemoryStream();
-        //�u���Ώە����� ,�֐��@�̃Z�b�g
         Dictionary<string, Func< dynamic[],Task <dynamic?>>> funcs = new()
         {
             { "input", InputAgent},
@@ -43,32 +41,39 @@ public partial class MyClass
         }
         var engine = new Engine(settings);
         var script = GetScript();
+        Console.WriteLine($"Call engine making process @ thread #{Thread.CurrentThread.ManagedThreadId}");
         var newThread = new Thread(engine.Ignition);
         newThread.Start(script);
-        AddConsole($"Ignition request has been ordered by thread #{Thread.CurrentThread.ManagedThreadId}");
+        Console.WriteLine($"Ignition request has been ordered @ thread #{Thread.CurrentThread.ManagedThreadId}");
         while (true)
         {
             await Task.Delay(500);
             string json = "";
             if(EngineBridge.from == EngineBridge.From.Engine)
             {
-                var bytes = new byte[EngineBridge.Bridge.Length];
-                EngineBridge.Bridge.Read(bytes, 0, bytes.Length);
-                json = EngineBridge.StandardEncoding.GetString(bytes);
-                var action = JsonSerializer.Deserialize<FuncCapsule>(json);
+                json = EngineBridge.ReadBridge();
                 dynamic? result = null;
-                if (action != null)
+                if (json != string.Empty)
                 {
-                    result = await funcs[action.name](action.args);
+                    try
+                    {
+                        var action = JsonSerializer.Deserialize<FuncCapsule>(json);
+                        if (action != null)
+                        {
+                            result = await funcs[action.name](action.args);
+                        }
+                    }
+                    catch (Exception ex) { 
+                        Console.Error.WriteLine(ex);
+                    }
                 }
+
+                Console.WriteLine($"Task calling request has been received @ thread #{Thread.CurrentThread.ManagedThreadId}\n" + json);
                 ResultCapule capule = new ResultCapule();
                 capule.SetValue(result);
-                EngineBridge.Bridge.Write(
-                    EngineBridge.StandardEncoding.GetBytes(
-                        JsonSerializer.Serialize(capule)
-                    )
-                );
+                EngineBridge.WriteBridge(JsonSerializer.Serialize(capule));
                 EngineBridge.from = EngineBridge.From.Owner;
+                Console.WriteLine($"Mission completed @ thread #{Thread.CurrentThread.ManagedThreadId}");
             }
         }
     }
@@ -105,6 +110,7 @@ public partial class MyClass
             {
                 mess += item.ToString();
             }
+            Console.WriteLine(mess);
             InputInvoke(mess);
         }
         int i = 0;
