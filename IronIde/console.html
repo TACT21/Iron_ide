@@ -9,9 +9,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type='module' src="./main.js"></script>
     <link rel="stylesheet" href="Console.css" />
+    <script>
+        function InputSet() {
+            document.getElementById('input').style.display = "none";
+            document.getElementById('asq_result').innerText = document.getElementById('order').innerText;
+            document.getElementById('input_result').innerText = document.getElementById("consoleInput").value;
+        }
+    </script>
 </head>
-
-    <body>       
+    <body>
+        <div class="deta_bridge">
+            <p id="input_result"></p>
+            <p id="asq_result"></p>
+        </div>
         <div id="prompt">
             <code id="console"></code>
             <section id="input">

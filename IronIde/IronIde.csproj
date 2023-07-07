@@ -19,8 +19,12 @@
     <WasmExtraFilesToDeploy Include="main.js" />
     <WasmExtraFilesToDeploy Include="*.js" />
     <WasmExtraFilesToDeploy Include="Scripts\*.js" />
-    <WasmExtraFilesToDeploy Include="Sytykelee\s*.css" />
+    <WasmExtraFilesToDeploy Include="Styles\*.css" />
 	<WasmExtraFilesToDeploy Include="*.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WasmExtraFilesToDeploy Remove="Scripts\file_piker.js" />
   </ItemGroup>
 
   <ItemGroup>

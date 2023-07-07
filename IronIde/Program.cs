@@ -67,11 +67,12 @@ public partial class MyClass
                         Console.Error.WriteLine(ex);
                     }
                 }
-
-                Console.WriteLine($"Task calling request has been received @ thread #{Thread.CurrentThread.ManagedThreadId}\n" + json);
+                Console.WriteLine($"Task calling request has been received @ thread #{Thread.CurrentThread.ManagedThreadId}");
+                Console.WriteLine($"Type: {(result != null ? result.GetType().Name:"NULL")}");
                 ResultCapule capule = new ResultCapule();
                 capule.SetValue(result);
-                EngineBridge.WriteBridge(JsonSerializer.Serialize(capule));
+                Console.WriteLine(JsonSerializer.Serialize<ResultCapule>(capule));
+                EngineBridge.WriteBridge(JsonSerializer.Serialize<ResultCapule>(capule));
                 EngineBridge.from = EngineBridge.From.Owner;
                 Console.WriteLine($"Mission completed @ thread #{Thread.CurrentThread.ManagedThreadId}");
             }
@@ -95,10 +96,11 @@ public partial class MyClass
 
     public static async Task<dynamic?> InputAgent(dynamic[] args)
     {
-        return ReadInput(args);
+        return await ReadInput(args);
     }
     public static async Task<string> ReadInput(dynamic[] args,int waitSec = 0)
     {
+        Console.WriteLine("Reading...");
         if(args.Length == 0)
         {
             InputInvoke("");

@@ -1,8 +1,5 @@
-﻿.prompt {
-    position: absolute;
-    bottom: 0;
+﻿#prompt {
     margin: 0;
-    background-color: #2D2D2D;
     color: #9AA0A6;
     width: 100vw;
     padding: 0;
@@ -15,6 +12,11 @@ html, body {
 }
 
 body {
+    background-color: #2D2D2D;
     position: relative;
     max-width: 200px;
+}
+
+.deta_bridge {
+    display:none;
 }

@@ -35,9 +35,8 @@ namespace IronIde.Components
             }
         }
 
-        public void Ignition(string rawscript,bool Recycle = false)
+        public void Ignition(string script, bool Recycle = false)
         {
-            string script = "IronPythonUtility.Test(str(hasattr(IronPythonUtility, 'DoTask')))\n";
             Console.WriteLine($"Create script @ thread #{Thread.CurrentThread.ManagedThreadId}");
             //スクリプト成形
             foreach (var item in settings.EventName)
@@ -48,10 +47,11 @@ namespace IronIde.Components
                 var strings = rx.Matches(script);
                 foreach (Match aim in strings)
                 {
-                    rawscript = rawscript.Replace(aim.Value, "IronPythonUtility.DoTask(" + item + "," + aim.Value.replace(item, "").replace("(", "[").replace(")", "]") + ")");
+                    script = 
+                        script.Replace(aim.Value, "IronPythonUtility.DoTask(\"" + item + "\"," + aim.Value.Replace(item, "").Replace("(", "[").Replace(")", "]") + ")")//配列化
+                        .Replace(",[]","");//空配列回避
                 }
             }
-            script += rawscript;
             Console.WriteLine($"===script===");
             Console.WriteLine(script);
             Console.WriteLine($"===script===");
@@ -83,7 +83,8 @@ namespace IronIde.Components
             {
                 scriptSource.Execute(scriptScope);
             }catch (Exception ex) {
-                utility.DoTask("print", new object[] {ex.Message,"\n@",ex.Source, "\n===StackTrace===\n", ex.StackTrace});
+                Console.Error.WriteLine(ex.Message, "\n@", ex.Source, "\n===StackTrace===\n", ex.StackTrace);
+                utility.DoTask("print", new object[] {ex.Message});
             }
             //後始末
             if (Recycle)
@@ -140,8 +141,8 @@ namespace IronIde.Components
 
     public class ResultCapule
     {
-        private string type= string.Empty;
-        private string resultJson = string.Empty;
+        public string type { set; get; } = string.Empty;
+        public string resultJson { set; get; } = string.Empty;
         public void SetValue(dynamic? value)
         {
             if (value == null)
@@ -153,9 +154,11 @@ namespace IronIde.Components
                 resultJson = JsonSerializer.Serialize(value, value.GetType());
                 type = value.GetType().FullName;
             }
+            Console.WriteLine($"Write to capsule {resultJson}");
         }
         public dynamic? GetValue()
         {
+            Console.WriteLine($"Revert from capsule {type}");
             return JsonSerializer.Deserialize(resultJson, Type.GetType(type));
         }
     }
@@ -163,12 +166,38 @@ namespace IronIde.Components
     public class IronUtility
     {
         public uint waitingSec = 0;
+        public void GetType(dynamic subject)
+        {
+            Console.WriteLine(subject.ToString());
+            Console.WriteLine(subject.GetType().Name);
+        }
+
+        public dynamic? DoTask(string name, IronPython.Runtime.PythonList args)
+        {
+            var property = new object[args.Count];
+            for (int i = 0; i < args.Count; i++)
+            {
+                if (args[i] != null)
+                {
+                    property[i] = args[i];
+                }
+            }
+            return DoTask(name, property);
+        }
+
+        public dynamic? DoTask(string name)
+        {
+            var property = new object[0];
+            return DoTask(name, property);
+        }
+
+
         public dynamic? DoTask(string name, object[] args)
         {
             FuncCapsule func = new FuncCapsule() { args = args, name = name };
             var order = JsonSerializer.Serialize<FuncCapsule>(func);
             EngineBridge.WriteBridge(order);
-            Console.WriteLine($"order is claimed @ thread #{Thread.CurrentThread.ManagedThreadId}\n"+order);
+            Console.WriteLine($"order is claimed @ thread #{Thread.CurrentThread.ManagedThreadId}");
             EngineBridge.from = EngineBridge.From.Engine;
             string json;
             while(true)
