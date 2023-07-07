@@ -61,7 +61,7 @@ namespace IronIde.Components
             Microsoft.Scripting.Hosting.ScriptScope scriptScope;
             Microsoft.Scripting.Hosting.ScriptSource scriptSource;
             var runtime = Python.CreateRuntime();
-            runtime.IO.SetInput(new MemoryStream(new byte[]), Encoding.Default);
+            runtime.IO.SetInput(new MemoryStream(new byte[0]), Encoding.Default);
             scriptEngine = Python.GetEngine(runtime);
             foreach (var assembly in settings.Assemblies)
             {
