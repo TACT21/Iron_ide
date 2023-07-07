@@ -3,8 +3,6 @@
 
 import { dotnet } from './dotnet.js'
 
-var consoleInput = "";
-var orderContent = "";
 var script = "";
 var receve = false;
 
@@ -48,7 +46,8 @@ setModuleImports('main.js', {
         addConsole: (e) => AddConsole(e),
         askQuestion: (e) => Asq(e),
         clearQuestion: (e) => function (e) {
-            AddConsole(orderContent + e);
+            AddConsole(document.getElementById('asq_result').innerText +" "+ e);
+            document.getElementById('asq_result').innerText = "";
         },
         getScript: () => { return script; }
     }
@@ -71,16 +70,16 @@ function Run() {
 await dotnet.run();
 
 function GetInput() {
-    var result = consoleInput;
-    consoleInput = "";
+    var result = document.getElementById('input_result').innerText;
+    document.getElementById('input_result').innerText = "";
+    if (result) {
+        console.log(result)
+    } else {
+        console.log("Null")
+    }
     return result;
 }
 
-function InputSet() {
-    document.getElementById('input').style.display = "none";
-    orderContent = document.getElementById('order').innerText;
-    consoleInput = document.getElementById("consoleInput").value
-}
 
 function AddConsole(e) {
     document.getElementById('console').innerHTML += (e + "<br/>")

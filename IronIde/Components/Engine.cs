@@ -35,49 +35,56 @@ namespace IronIde.Components
             }
         }
 
-        public void Ignition(string script,bool Recycle = false)
+        public void Ignition(string script, bool Recycle = false)
         {
-            Console.WriteLine($"Making script @ thread #{Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"Create script @ thread #{Thread.CurrentThread.ManagedThreadId}");
             //スクリプト成形
             foreach (var item in settings.EventName)
             {
-                var regex = "";
-                foreach (var s in item)
-                {
-                    regex += "\\";
-                    regex += ((int)s).ToString();
-                }
-                Regex rx = new Regex(regex + @"\s*\x28[^\x29]*\x28",
+                
+                Regex rx = new Regex(item + @"\s*\x28.*\x29",
                   RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 var strings = rx.Matches(script);
                 foreach (Match aim in strings)
                 {
-                    script = script.Replace(aim.Value, "IronPythonUtility.DoTask(" + item + "," + aim.Value.replace(item, "").replace("(", "[").replace(")", "]") + ")");
+                    script = 
+                        script.Replace(aim.Value, "IronPythonUtility.DoTask(\"" + item + "\"," + aim.Value.Replace(item, "").Replace("(", "[").Replace(")", "]") + ")")//配列化
+                        .Replace(",[]","");//空配列回避
                 }
             }
-            Console.WriteLine($"Making engine @ thread #{Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"===script===");
+            Console.WriteLine(script);
+            Console.WriteLine($"===script===");
+            Console.WriteLine($"Create runtime @ thread #{Thread.CurrentThread.ManagedThreadId}");
             //エンジン 作成
             Microsoft.Scripting.Hosting.ScriptEngine scriptEngine;
             Microsoft.Scripting.Hosting.ScriptScope scriptScope;
             Microsoft.Scripting.Hosting.ScriptSource scriptSource;
             var runtime = Python.CreateRuntime();
-            runtime.IO.SetInput(new MemoryStream(new byte[0]), Encoding.Default);
+            Console.WriteLine($"Create memory space @ thread #{Thread.CurrentThread.ManagedThreadId}");
+            runtime.IO.SetInput(new MemoryStream(), Encoding.Default);
+            Console.WriteLine($"Create engine @ thread #{Thread.CurrentThread.ManagedThreadId}");
             scriptEngine = Python.GetEngine(runtime);
+            Console.WriteLine($"Load assemblies @ thread #{Thread.CurrentThread.ManagedThreadId}");
             foreach (var assembly in settings.Assemblies)
             {
                 scriptEngine.Runtime.LoadAssembly(assembly);
             }
+            Console.WriteLine($"Create scope @ thread #{Thread.CurrentThread.ManagedThreadId}");
             scriptScope = scriptEngine.CreateScope();
+            Console.WriteLine($"Create source @ thread #{Thread.CurrentThread.ManagedThreadId}");
             scriptSource = scriptEngine.CreateScriptSourceFromString(script);
+            Console.WriteLine($"Check the rely system @ thread #{Thread.CurrentThread.ManagedThreadId}");
             var utility = new IronUtility();
-            utility.DoTask("print", new object[] {"IronPython3.4 with Dynamic Language Runtime" });
+            utility.DoTask("print", new object[] { "the rely system seemed to be fine." });
             scriptScope.SetVariable("IronPythonUtility", utility);
             Console.WriteLine($"Ignition @ thread #{Thread.CurrentThread.ManagedThreadId}");
             try
             {
                 scriptSource.Execute(scriptScope);
             }catch (Exception ex) {
-                utility.DoTask("print", new object[] {ex.Message,"\n@",ex.Source, "\n===StackTrace===\n", ex.StackTrace});
+                Console.Error.WriteLine(ex.Message, "\n@", ex.Source, "\n===StackTrace===\n", ex.StackTrace);
+                utility.DoTask("print", new object[] {ex.Message});
             }
             //後始末
             if (Recycle)
@@ -102,13 +109,28 @@ namespace IronIde.Components
 
     public static class EngineBridge
     {
-        public static MemoryStream Bridge { set; get; } = new MemoryStream(new byte[]);
+        public static MemoryStream BridgeStream { set; get; } = new MemoryStream();
+        public static string BridgeString { set; get; } = string.Empty;
         public static Encoding StandardEncoding { set; get; } = Encoding.UTF8;
-        public static From? from = null;
+        public static void WriteBridge(string mess)
+        {
+            /*var array = StandardEncoding.GetBytes(mess);
+            Bridge.Write(array, 0, array.Length);*/
+            BridgeString = mess;
+        }
+        public static string ReadBridge()
+        {
+            /*var array = new byte[Bridge.Length];
+            Bridge.Read(array, 0, array.Length);
+            return StandardEncoding.GetString(array);*/
+            return BridgeString;
+        }
+        public static From from = From.Neither;
         public enum From
         {
             Engine,
-            Owner
+            Owner,
+            Neither
         }
     }
 
@@ -119,8 +141,8 @@ namespace IronIde.Components
 
     public class ResultCapule
     {
-        private string type= string.Empty;
-        private string resultJson = string.Empty;
+        public string type { set; get; } = string.Empty;
+        public string resultJson { set; get; } = string.Empty;
         public void SetValue(dynamic? value)
         {
             if (value == null)
@@ -132,34 +154,78 @@ namespace IronIde.Components
                 resultJson = JsonSerializer.Serialize(value, value.GetType());
                 type = value.GetType().FullName;
             }
+            Console.WriteLine($"Write to capsule {resultJson}");
         }
-        public dynamic GetValue()
+        public dynamic? GetValue()
         {
+            Console.WriteLine($"Revert from capsule {type}");
             return JsonSerializer.Deserialize(resultJson, Type.GetType(type));
         }
     }
 
-    class IronUtility
+    public class IronUtility
     {
         public uint waitingSec = 0;
+        public void GetType(dynamic subject)
+        {
+            Console.WriteLine(subject.ToString());
+            Console.WriteLine(subject.GetType().Name);
+        }
+
+        public dynamic? DoTask(string name, IronPython.Runtime.PythonList args)
+        {
+            var property = new object[args.Count];
+            for (int i = 0; i < args.Count; i++)
+            {
+                if (args[i] != null)
+                {
+                    property[i] = args[i];
+                }
+            }
+            return DoTask(name, property);
+        }
+
+        public dynamic? DoTask(string name)
+        {
+            var property = new object[0];
+            return DoTask(name, property);
+        }
+
+
         public dynamic? DoTask(string name, object[] args)
         {
-            FuncCapsule capsule = new FuncCapsule() { args = args, name = name };
-            EngineBridge.Bridge.Write(
-                EngineBridge.StandardEncoding.GetBytes(
-                    JsonSerializer.Serialize<FuncCapsule>(capsule)
-                )
-            );
+            FuncCapsule func = new FuncCapsule() { args = args, name = name };
+            var order = JsonSerializer.Serialize<FuncCapsule>(func);
+            EngineBridge.WriteBridge(order);
+            Console.WriteLine($"order is claimed @ thread #{Thread.CurrentThread.ManagedThreadId}");
             EngineBridge.from = EngineBridge.From.Engine;
-            Thread.Sleep(1000);
-            string json = "";
-            lock (EngineBridge.BridgeLocker)
+            string json;
+            while(true)
             {
-                var bytes = new byte[EngineBridge.Bridge.Length];
-                EngineBridge.Bridge.Read( bytes, 0, bytes.Length );
-                json = EngineBridge.StandardEncoding.GetString(bytes);
+                Thread.Sleep(1000);
+                if (EngineBridge.from == EngineBridge.From.Owner)
+                {
+                    Console.WriteLine($"Result is received @ thread #{Thread.CurrentThread.ManagedThreadId}");
+                    json = EngineBridge.ReadBridge();
+                    break;
+                }
             }
-            return JsonSerializer.Deserialize<ResultCapule>(json).GetValue();
+            dynamic? result;
+            try
+            {
+                var capsule = JsonSerializer.Deserialize<ResultCapule>(json); 
+                result = capsule.GetValue();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message + "\n we provide null to program. Stack trace is below.\n" + ex.StackTrace);
+                return null;
+            }
+            return result;
+        }
+        public void Test(string mess)
+        {
+            Console.WriteLine(mess);
         }
     }
 }
