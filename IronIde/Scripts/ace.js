@@ -4,10 +4,10 @@ var id = "editor"
 window.addEventListener("load", Init)
 
 function Init() {
-    const div = document.createElement('div');
+    /*const div = document.createElement('div');
     div.style.height = "600px";
     div.id = id;
-    document.body.appendChild(div);
+    document.body.appendChild(div);*/
     editor = ace.edit(id);
     editor.$blockScrolling = Infinity;
     editor.setOptions({
