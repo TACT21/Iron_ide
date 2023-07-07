@@ -160,7 +160,7 @@ namespace IronIde.Components
         }
     }
 
-    class IronUtility
+    public class IronUtility
     {
         public uint waitingSec = 0;
         public dynamic? DoTask(string name, object[] args)
