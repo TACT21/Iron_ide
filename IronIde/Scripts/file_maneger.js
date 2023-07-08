@@ -1,45 +1,81 @@
-//https://kuwk.jp/blog/dd/
-var blobUrl = []
+var files = {}
 
-document.getElementById('file_list').addEventListener('dragover', function () {
-	event.preventDefault();
-	this.style.backgroundColor = '#80ff80';
+// ドラッグ&ドロップエリアの取得
+var fileArea = document.getElementById('dropArea');
+
+// input[type=file]の取得
+var fileInput = document.getElementById('uploadFile');
+
+// ドラッグオーバー時の処理
+fileArea.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    fileArea.classList.add('dragover');
 });
 
-document.getElementById('file_list').addEventListener('dragleave', function () {
-	this.style.backgroundColor = '';
+// ドラッグアウト時の処理
+fileArea.addEventListener('dragleave', function (e) {
+    e.preventDefault();
+    fileArea.classList.remove('dragover');
 });
 
-document.getElementById('file_list').addEventListener('drop', function () {
-	event.preventDefault();
-	this.style.backgroundColor = '';
-	if (event.dataTransfer.files.length > 0) {
-		document.getElementById('userfile').files = event.dataTransfer.files;
-		document.getElementById('userfile').dispatchEvent(new Event('change'));
-	}
+// ドロップ時の処理
+fileArea.addEventListener('drop', function (e) {
+    e.preventDefault();
+    fileArea.classList.remove('dragover');
+    // ドロップしたファイルの取得
+    var files = e.dataTransfer.files;
+    // 取得したファイルをinput[type=file]へ
+    fileInput.files = files;
 });
 
-document.getElementById('userfile').addEventListener('change', function () {
-	document.getElementById('file_info').innerHTML = 
-		'ファイル名:'+this.files[0].name+'<br>'+
-		'タイプ:'+this.files[0].type+'<br>'+
-		'サイズ:'+this.files[0].size+'<br>'+
-		'更新日:'+this.files[0].lastModifiedDate+'<br>';
-});
+// input[type=file]に変更があれば実行
+// もちろんドロップ以外でも発火します
+fileInput.addEventListener('change', function (e) {
+    var file = e.target.files[0];
 
-function LoadFiles(){
-	const reader = new FileReader();
-	var text = reader.readAsText();
+    if (typeof e.target.files[0] !== 'undefined') {
+        let reader = new FileReader();
+        FileReader.readAsText(file);
+        if (SessonStorageRead(file.name) === "") {
+
+        } else {
+            document.getElementById("object_url").innerText = URL.createObjectURL(file)
+            document.getElementById("fileName").value = "";
+            document.getElementById("error").classList.remove("hide");
+        }
+    }
+}, false);
+
+function Rename() {
+
 }
 
-function TempSaveFile(){
+function FileZipper() {
 
 }
 
-function LocalStorageSave(){
+function ProjFiler
 
+function SessonStorageSave(id, mess) {
+    if (mess === "") {
+        window.sessionStorage.removeItem(id);
+    } else {
+        window.sessionStorage.setItem(id, mess);
+    }
 }
 
-function LocalStorageLoad(){
+function SessonStorageRead(id) {
+        return sessionStorage.getItem(id);
+}
 
+function LocalStorageSave(id, mess) {
+    if (mess === "") {
+        window.localStorage.removeItem(id);
+    } else {
+        window.localStorage.setItem(id, mess);
+    }
+}
+
+function LocalStorageRead(id) {
+    return localStorage.getItem(id);
 }

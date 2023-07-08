@@ -10,9 +10,15 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="index.html" />
+    <None Remove="Styles\Editor.css" />
+    <None Remove="Styles\file_piker.css" />
+    <None Remove="Styles\gernal.css" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
+    <Content Include="Styles\Editor.css" />
+    <Content Include="Styles\file_piker.css" />
+    <Content Include="Styles\gernal.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +31,9 @@
 
   <ItemGroup>
     <WasmExtraFilesToDeploy Remove="Scripts\file_piker.js" />
+    <WasmExtraFilesToDeploy Remove="Styles\Editor.css" />
+    <WasmExtraFilesToDeploy Remove="Styles\file_piker.css" />
+    <WasmExtraFilesToDeploy Remove="Styles\gernal.css" />
   </ItemGroup>
 
   <ItemGroup>
