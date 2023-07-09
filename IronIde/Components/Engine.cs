@@ -76,7 +76,7 @@ namespace IronIde.Components
             scriptSource = scriptEngine.CreateScriptSourceFromString(script);
             Console.WriteLine($"Check the rely system @ thread #{Thread.CurrentThread.ManagedThreadId}");
             var utility = new IronUtility();
-            utility.DoTask("print", new object[] { "the rely system seemed to be fine." });
+            utility.DoTask("print", new object[] { "IronPythonIDE with Dynamic Language Runtime" });
             scriptScope.SetVariable("IronPythonUtility", utility);
             Console.WriteLine($"Ignition @ thread #{Thread.CurrentThread.ManagedThreadId}");
             try
@@ -84,8 +84,9 @@ namespace IronIde.Components
                 scriptSource.Execute(scriptScope);
             }catch (Exception ex) {
                 Console.Error.WriteLine(ex.Message, "\n@", ex.Source, "\n===StackTrace===\n", ex.StackTrace);
-                utility.DoTask("print", new object[] {ex.Message});
+                utility.DoTask("print", new object[] { "<p style = \"color: \'#ef857d\'\">", ex.Message,"</p>"});
             }
+            utility.DoTask("print", new object[] { "<p style = \"color: \'#7df0a3\'\">", "All Tasks is Compreate.", "</p>" });
             //後始末
             if (Recycle)
             {

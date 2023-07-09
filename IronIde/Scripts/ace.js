@@ -1,9 +1,9 @@
 var editor;
 var id = "editor"
 
-window.addEventListener("load", Init)
+window.addEventListener("load", init)
 
-function Init() {
+function init() {
     /*const div = document.createElement('div');
     div.style.height = "600px";
     div.id = id;
@@ -20,11 +20,11 @@ function Init() {
 }
 
 
-function AceGetValue() {
+function aceGetValue() {
     return editor.getValue();
 }
 
-function AceSetValue(e) {
+function aceSetValue(e) {
     console.log(e + "\n@Ace.js AceSetValue");
     editor.getSession().setValue(e);
 }

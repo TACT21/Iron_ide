@@ -9,13 +9,16 @@
 	<Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="cowork.html" />
     <None Remove="index.html" />
-    <None Remove="Styles\Editor.css" />
-    <None Remove="Styles\file_piker.css" />
-    <None Remove="Styles\gernal.css" />
+    <None Remove="Styles\chat.css" />
+    <None Remove="Styles\co_editor.css" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="cowork.html" />
     <Content Include="index.html" />
+    <Content Include="Styles\chat.css" />
+    <Content Include="Styles\co_editor.css" />
     <Content Include="Styles\Editor.css" />
     <Content Include="Styles\file_piker.css" />
     <Content Include="Styles\gernal.css" />
@@ -24,20 +27,31 @@
   <ItemGroup>
     <WasmExtraFilesToDeploy Include="main.js" />
     <WasmExtraFilesToDeploy Include="*.js" />
+	<WasmExtraFilesToDeploy Include="img\*" />
     <WasmExtraFilesToDeploy Include="Scripts\*.js" />
     <WasmExtraFilesToDeploy Include="Styles\*.css" />
+	<WasmExtraFilesToDeploy Include="Styles\file_piker.css" />
+	<WasmExtraFilesToDeploy Include="*.css" />
 	<WasmExtraFilesToDeploy Include="*.html" />
+	<WasmExtraFilesToDeploy Include="cowork.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <WasmExtraFilesToDeploy Remove="Scripts\file_piker.js" />
-    <WasmExtraFilesToDeploy Remove="Styles\Editor.css" />
-    <WasmExtraFilesToDeploy Remove="Styles\file_piker.css" />
-    <WasmExtraFilesToDeploy Remove="Styles\gernal.css" />
+    <WasmExtraFilesToDeploy Remove="cowork.html" />
+    <WasmExtraFilesToDeploy Remove="scripts\ace_cowork.js" />
+    <WasmExtraFilesToDeploy Remove="scripts\chat.js" />
+    <WasmExtraFilesToDeploy Remove="scripts\login_maneger.js" />
+    <WasmExtraFilesToDeploy Remove="Scripts\page_caller.js" />
+    <WasmExtraFilesToDeploy Remove="Styles\chat.css" />
+    <WasmExtraFilesToDeploy Remove="Styles\co_editor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="IronPython.StdLib" Version="3.4.0" />
     <PackageReference Include="Microsoft.NET.WebAssembly.Threading" Version="8.0.0-preview.5.23280.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="img\" />
   </ItemGroup>
 </Project>

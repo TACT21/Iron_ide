@@ -3,51 +3,64 @@
 <head>
     <meta charset="utf-8" />
     <title>IronPython</title>
-    <script src="ace.js" async></script>
-    <script src="PageCaller.js" async></script>
+    <script src="ace.js"></script>
+    <script src="page_caller.js"></script>
+    <script src="file_maneger.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
+    <link rel="icon" href="rogo.png" sizes="any" />
     <style>
-        iframe {
-            width: 90vw;
+        .prompt {
+            width: 100%;
             height: 300px;
+            position: fixed;
+            bottom: 0;
+            z-index: 1000;
         }
     </style>
     <link rel="stylesheet" href="file_piker.css" />
     <link rel="stylesheet" href="gernal.css" />
+    <link rel="stylesheet" href="Editor.css" />
 </head>
     <body>
         <main id="main">
             <section class="Header">
                 <p id="fileName"></p>
             </section>
-            <section>
-                <button onclick="EngineCall()">Run</button>
+            <section class="debug_comands warp">
+                <button class="debug_comands item" onclick="EngineCall()"><span>Run</span></button>
             </section>
             <section id="Filer">
+                <div class="comand_pallet hide">
+                    <input type="file" class="comand_pallet item hide" id="userfile"/>
+                    <input type="button" class="comand_pallet item" id="newFileSaverInput" onclick="newFileSaver('newfile.py')"/>
+                    <input type="button" class="comand_pallet item" id="projFileSaverInput" onclick="projFileSaver()" />
+                    <input type="button" class="comand_pallet item" id="projFileLoadHelperInput" onclick="projFileLoadHelper()" />
+                    <input type="button" class="comand_pallet item" id="fileZipperInput" onclick="fileZipper()/">
+                </div>
                 <div class="comand_pallet warp">
-                    <input type="file" class="comand_pallet item hide" id="userfile">
-                    <label class="comand_pallet item" for="userfile">Upload</label>
-                    <button class="comand_pallet item">New File</button>
-                    <button class="comand_pallet item">Save File</button>
-                    <button class="comand_pallet item">Load File</button>
-                    <button class="comand_pallet item">Download File</button>
+                    <label class="comand_pallet item" for="userfile"><img src="3.jpg" alt="Upload" /></label>
+                    <label class="comand_pallet item" for="newFileSaverInput"><img src="5.jpg" alt="New File" /></label>
+                    <label class="comand_pallet item" for="projFileSaverInput"><img src="2.jpg" alt="Save File" /></label>
+                    <label class="comand_pallet item" for="projFileLoadHelperInput"><img src="4.jpg" alt="Load File" /></label>
+                    <label class="comand_pallet item" for="fileZipperInput"><img src="1.jpg" alt="Download File" /></label>
                 </div>
                 <div class="comand_pallet overlay"></div>
-                <div id="files list warp">
-                    <button class="files list item"></button>
+                <div id="FileList" class="files list warp">
                 </div>
-                <div id="error" class="files error overlay">
+                <div id="error" class="files error overlay hide">
                     <div>
                         <p>ファイルの重複が確認されました。</p>
                         <p>上書きするなら、そのままアップロードを押してください</p>
                         <p id="object_url" class="hide"></p>
-                        <input id="fileName"/><button onclick="Rename()">アップロード</button>
+                        <input id="fileName" /><button onclick="rename()">アップロード</button>
                     </div>
                 </div>
             </section>
             <section id="editor" class="edit">
-
+            </section>
+            <section id="prompt" class="prompt hide">
+                <button onclick="EngineDel()">Stop</button><br>
             </section>
         </main>
     </body>

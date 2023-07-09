@@ -1,2 +1,98 @@
-﻿body {
+﻿html, body, #main {
+    height: 100%;
+    width: 100%;
+    margin:0;
+    padding:0;
+}
+
+#main {
+    display: grid;
+    grid-template-rows: 4rem 1fr;
+    grid-template-columns: 200px 1fr;
+}
+
+.debug_comands.warp {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+
+.debug_comands.item {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.5;
+    position: relative;
+    display: inline-block;
+    padding: 1rem 4rem;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    color: #212529;
+    border-radius: 0.5rem;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    border-radius: 0.5rem;
+    font-size: .7rem;
+}
+
+.debug_comands.item {
+    overflow: hidden;
+    color: #fff;
+    border-radius: 0;
+    background: #000;
+}
+
+.debug_comands.item span {
+    position: relative;
+}
+
+.debug_comands.item:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    content: '';
+    -webkit-transition: all .5s ease-in-out;
+    transition: all .5s ease-in-out;
+    -webkit-transform: translateX(-80%) translateY(-25px);
+    transform: translateX(-80%) translateY(-25px);
+    border-radius: 50%;
+    background: #094;
+}
+
+.debug_comands.item:hover:before {
+    width: 400px;
+    height: 400px;
+    -webkit-transform: translateX(-1%) translateY(-175px);
+    transform: translateX(-1%) translateY(-175px);
+}
+
+#Filer {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+#editor {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
 }

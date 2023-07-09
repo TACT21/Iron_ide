@@ -144,3 +144,4 @@ public partial class MyClass
         return null;
     }
 }
+  
