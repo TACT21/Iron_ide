@@ -5,7 +5,7 @@ VisualStudioVersion = 17.6.33513.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronIde", "IronIde\IronIde.csproj", "{F36B0F09-393B-457D-9431-5BE6A18931D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatManager", "ChatManager\ChatManager.csproj", "{F5D9E0E6-65B4-497A-97A8-ACE56E4DDF8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatManager", "ChatManager\ChatManager.csproj", "{F5D9E0E6-65B4-497A-97A8-ACE56E4DDF8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

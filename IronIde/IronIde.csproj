@@ -7,43 +7,27 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <WasmEnableThreads>true</WasmEnableThreads>
 	<Nullable>enable</Nullable>
+	<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="cowork.html" />
-    <None Remove="index.html" />
-    <None Remove="Styles\chat.css" />
-    <None Remove="Styles\co_editor.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="cowork.html" />
-    <Content Include="index.html" />
-    <Content Include="Styles\chat.css" />
-    <Content Include="Styles\co_editor.css" />
-    <Content Include="Styles\Editor.css" />
-    <Content Include="Styles\file_piker.css" />
-    <Content Include="Styles\gernal.css" />
-  </ItemGroup>
 
   <ItemGroup>
-    <WasmExtraFilesToDeploy Include="main.js" />
-    <WasmExtraFilesToDeploy Include="*.js" />
 	<WasmExtraFilesToDeploy Include="img\*" />
     <WasmExtraFilesToDeploy Include="Scripts\*.js" />
     <WasmExtraFilesToDeploy Include="Styles\*.css" />
-	<WasmExtraFilesToDeploy Include="Styles\file_piker.css" />
-	<WasmExtraFilesToDeploy Include="*.css" />
 	<WasmExtraFilesToDeploy Include="*.html" />
-	<WasmExtraFilesToDeploy Include="cowork.html" />
-  </ItemGroup>
+	<WasmExtraFilesToDeploy Include="editor\*" />
+	<WasmExtraFilesToDeploy Include="editor\style\cowork*" />
+	<WasmExtraFilesToDeploy Include="editor\style\common\*" />
+	<WasmExtraFilesToDeploy Include="editor\style\single*" />
+	<WasmExtraFilesToDeploy Include="editor\script\cowork*" />
+	<WasmExtraFilesToDeploy Include="editor\script\common\*" />
+	<WasmExtraFilesToDeploy Include="editor\script\single*" />
+	<WasmExtraFilesToDeploy Include="experiments\*" />
+	<WasmExtraFilesToDeploy Include="runtime\*" />
+	<WasmExtraFilesToDeploy Include="manifest.json" />
+	<WasmExtraFilesToDeploy Include="manifest.json" />
 
-  <ItemGroup>
-    <WasmExtraFilesToDeploy Remove="cowork.html" />
-    <WasmExtraFilesToDeploy Remove="scripts\ace_cowork.js" />
-    <WasmExtraFilesToDeploy Remove="scripts\chat.js" />
-    <WasmExtraFilesToDeploy Remove="scripts\login_maneger.js" />
-    <WasmExtraFilesToDeploy Remove="Scripts\page_caller.js" />
-    <WasmExtraFilesToDeploy Remove="Styles\chat.css" />
-    <WasmExtraFilesToDeploy Remove="Styles\co_editor.css" />
+	  <WasmExtraFilesToDeploy Remove="Regacy\*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,4 +38,8 @@
   <ItemGroup>
     <Folder Include="img\" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call $(SolutionDir)\IronIde\debug\debug.bat" />
+  </Target>
 </Project>
