@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>IronPython</title>
+    <link rel="icon" href="rogo.png" sizes="any" />
+
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-functions.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/3.5.2/firebase-ui-auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+
+    <script src="firepad.js"></script>
+
+    <script src="login_manager.js" async></script>
+    <script src="ace_cowork.js"></script>
+    <script src="page_caller.js" async></script>
+    <script src="file_maneger.js" async></script>
+    <script src="chat.js"></script>
+
+    <style>
+        .prompt {
+            width: 100%;
+            height: 300px;
+            position: fixed;
+            bottom: 0;
+            z-index: 1000;
+        }
+    </style>
+
+    <link rel="stylesheet" href="firepad.css" />
+
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/3.5.2/firebase-ui-auth.css" />
+
+    <link rel="stylesheet" href="gernal.css" />
+    <link rel="stylesheet" href="Editor.css" />
+    <link rel="stylesheet" href="co_editor.css" />
+    <link rel="stylesheet" href="chat.css" />
+
+</head>
+<body>
+    <main id="main">
+        <section class="Header">
+            <p id="fileName"></p>
+        </section>
+        <section class="debug_comands warp">
+            <button class="debug_comands item" onclick="EngineCall()"><span>Run</span></button>
+            <div id="auth"></div>
+        </section>
+        <section id="editor" class="edit">
+        </section>
+        <section id="chat">
+            <header class="demobox-header">
+                <span class="demobox-sitename">Chat Space</span>
+                <div class="hamburger-demo-menubox">
+                    <input id="hamburger-demo1" type="checkbox" class="input-hidden">
+                    <label for="hamburger-demo1" class="hamburger-demo-switch hamburger-demo-switch1">
+                        <span class="hamburger-switch-line1"></span>
+                    </label>
+                    <div class="hamburger-demo-menuwrap" id="userlist">
+                    </div>
+                    <div class="hamburger-demo-cover"></div>
+                </div>
+            </header>
+            <div id="chat_room">
+            </div>
+            <p id="displayname" class="hide"></p>
+            <div class="chat_controller">
+                <input id="content" /><button onclick="Send()">Send</button>
+            </div>
+        </section>
+        <section id="prompt" class="prompt hide">
+            <button onclick="EngineDel()">Stop</button><br>
+        </section>
+    </main>
+</body>
+</html>

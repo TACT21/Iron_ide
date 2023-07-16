@@ -28,3 +28,8 @@ function aceSetValue(e) {
     console.log(e + "\n@Ace.js AceSetValue");
     editor.getSession().setValue(e);
 }
+
+window.ace = {
+    getValue: aceGetValue(),
+    setValue: aceSetValue(e)
+};

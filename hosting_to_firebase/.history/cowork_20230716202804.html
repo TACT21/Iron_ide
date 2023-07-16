@@ -17,7 +17,6 @@
             z-index: 1000;
         }
     </style>
-
 </head>
 <body>
   <div id="editor" style="height: 600px"></div>
@@ -26,17 +25,17 @@
     var editor = ace.edit("editor");
     editor.$blockScrolling = Infinity;
     editor.setOptions({
-    enableBasicAutocompletion: true,
-    enableSnippets: true,
-    enableLiveAutocompletion: true
+      enableBasicAutocompletion: true,
+      enableSnippets: true,
+      enableLiveAutocompletion: true
     });
     editor.setTheme("ace/theme/monokai");
     editor.getSession().setMode("ace/mode/javascript");
+    editor.on("input",function(){
+        console.log("input!");
+    });
     editor.on("change",function(delta){
-        var cursor = editor.getCursorPosition();
-        if((delta.start.row === cursor.row)&&(delta.start.column === cursor.column)){
-            console.log(delta)
-        }
+        console.log(delta);
     })
     function add(){
         // Add some text in a custom position
@@ -45,7 +44,7 @@
             column: 0
         };
 
-        var text = "This text has been \n dinamically inserted";
+        var text = "This text has been dinamically inserted";
         editor.session.insert(customPosition , text);
     }
   </script>

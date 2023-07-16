@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <title>IronPython</title>
+    <link rel="icon" href="rogo.png" sizes="any" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js"></script>
+
+    <style>
+        .prompt {
+            width: 100%;
+            height: 300px;
+            position: fixed;
+            bottom: 0;
+            z-index: 1000;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-analytics.js"></script>
+    <script>
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyAzEm-lZvEz2s5Ed3ov9OJrB4iEeN4c4Io",
+          authDomain: "ironpythonide.firebaseapp.com",
+          databaseURL: "https://ironpythonide-default-rtdb.firebaseio.com",
+          projectId: "ironpythonide",
+          storageBucket: "ironpythonide.appspot.com",
+          messagingSenderId: "270835211248",
+          appId: "1:270835211248:web:513dc7ed225f9cb5d99b35",
+          measurementId: "G-7PSWR5K3PE"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        var editor = ace.edit("editor");
+        editor.$blockScrolling = Infinity;
+        editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+        });
+        editor.setTheme("ace/theme/monokai");
+        editor.getSession().setMode("ace/mode/javascript");
+        editor.on("change",function(delta){
+            var cursor = editor.getCursorPosition();
+            if((delta.start.row === cursor.row)&&(delta.start.column === cursor.column)){
+                console.log("chenge!")
+            }
+        })
+        function add(){
+            // Add some text in a custom position
+            var customPosition = {
+                row: 0,
+                column: 0
+            };
+
+            var text = "This text has been dinamically inserted";
+            editor.session.insert(customPosition , text);
+        }
+      </script>
+</head>
+<body>
+  <div id="editor" style="height: 600px"></div>
+  <button onclick="add()">Add</button>
+</body>
+</html>

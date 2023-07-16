@@ -13,7 +13,7 @@
     iframe.style.bottom = "0";
     elem.appendChild(iframe);
     elem.classList.remove("hide");
-    var a = aceGetValue();
+    var a = window.ace.getValue();
     window.addEventListener('message', function (e) {
         switch (e.data.action) {
             case 'ReqScript':
