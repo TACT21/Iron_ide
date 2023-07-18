@@ -17,19 +17,12 @@ function init() {
     });
     editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/python");
+    window.IronIde = {};
+    window.IronIde.getValue = function () {
+        return editor.getValue();
+    };
+    window.IronIde.setValue = function (e) {
+        console.log(e + "\n@Ace.js AceSetValue");
+        editor.getSession().setValue(e);
+    };
 }
-
-
-function aceGetValue() {
-    return editor.getValue();
-}
-
-function aceSetValue(e) {
-    console.log(e + "\n@Ace.js AceSetValue");
-    editor.getSession().setValue(e);
-}
-
-window.ace = {
-    getValue: aceGetValue(),
-    setValue: aceSetValue(e)
-};

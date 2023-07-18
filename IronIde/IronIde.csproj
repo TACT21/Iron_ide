@@ -16,12 +16,12 @@
     <WasmExtraFilesToDeploy Include="Styles\*.css" />
 	<WasmExtraFilesToDeploy Include="*.html" />
 	<WasmExtraFilesToDeploy Include="editor\*" />
-	<WasmExtraFilesToDeploy Include="editor\style\cowork*" />
-	<WasmExtraFilesToDeploy Include="editor\style\common\*" />
-	<WasmExtraFilesToDeploy Include="editor\style\single*" />
-	<WasmExtraFilesToDeploy Include="editor\script\cowork*" />
-	<WasmExtraFilesToDeploy Include="editor\script\common\*" />
-	<WasmExtraFilesToDeploy Include="editor\script\single*" />
+	<WasmExtraFilesToDeploy Include="editor\style\cowork\*.css" />
+	<WasmExtraFilesToDeploy Include="editor\style\common\*.css" />
+	<WasmExtraFilesToDeploy Include="editor\style\single\*.css" />
+	<WasmExtraFilesToDeploy Include="editor\script\cowork\*.js" />
+	<WasmExtraFilesToDeploy Include="editor\script\common\*.js" />
+	<WasmExtraFilesToDeploy Include="editor\script\single\*.js" />
 	<WasmExtraFilesToDeploy Include="experiments\*" />
 	<WasmExtraFilesToDeploy Include="runtime\*" />
 	<WasmExtraFilesToDeploy Include="manifest.json" />
@@ -38,8 +38,4 @@
   <ItemGroup>
     <Folder Include="img\" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="call $(SolutionDir)\IronIde\debug\debug.bat" />
-  </Target>
 </Project>
