@@ -7,46 +7,39 @@
     <title>IronPython</title>
     <link rel="stylesheet" href="index.css" />
     <link rel="stylesheet" href="./Styles/index.css" />
-        <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <section class="warper">
-        <h1>Welcome to <span style="color: #eebbc3;">Iron Python Ide</span></h1>
+        <h1>Welcome to <span style="color: #f9bc60;">Iron Python Ide</span></h1>
         <p>開発環境を選んでください。</p>
     </section>
     <section class="option">
-        <a href="./editor.html" class="card">
+        <div href="" class="card">
             <div class="card__imgframe" style="background-image: url(./img2.png);"></div>
             <div class="card__textbox">
                 <div class="card__titletext">
                 オフライン開発
                 </div>
                 <div class="card__overviewtext">
-                ファイルを一人で実行環境を備えた WEB IDE で開発します。現在、シングルスレッド・stdlibのみの参照するpython3系ファイルの運用をサポートしています。
+                <p>ファイルを一人で実行環境を備えた WEB IDE で開発します。</p>
+                <a href="./ide/single/editor.html" class="btn">Go</a>
                 </div>
             </div>
-        </a>
-        <a href="./cowork.html" class="card">
+        </div>
+        <div href="./ide/cowork/cowork.html" class="card">
             <div class="card__imgframe"style="background-image: url(./img1.png);"></div>
             <div class="card__textbox">
                 <div class="card__titletext">
                 共同開発
                 </div>
                 <div class="card__overviewtext">
-                様々な人と、共同で開発します。現在、単一のファイルのみサポートしています。
+                様々な人と、共同で開発します。
                 </div>
+                <input type="text" id="prjId"><button  class="btn" onclick="LoginPrj()">Join</button>
             </div>
-        </a>
+        </div>
     </section>    
-    <script>
-    // service workerの登録関係
-    if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service_worker.js').then(function(registration) {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }).catch(function(err) {
-        console.log('ServiceWorker registration failed: ', err);
-    });
-    }
-    </script>
+    <script src="./index.js"></script>
 </body>
 </html>
