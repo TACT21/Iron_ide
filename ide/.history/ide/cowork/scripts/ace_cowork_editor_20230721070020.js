@@ -83,7 +83,7 @@ function init() {
                         r: delta.start.row,
                         c: delta.start.column
                     },
-                    v: delta.lines,
+                    v: delta.lines.join(','),
                     u:window.IronIde.userId
                 });
             } else if (delta.action === "remove") {
@@ -106,6 +106,7 @@ function init() {
     //Add Chenge Listener
     onChildAdded(dbRef, function (data) {
         var value = data.val()
+        console.log(value);
         if (value.a = "i" && value.u != window.IronIde.userId) {
             InsertInput(GetPosition(value.s.r, value.s.c),value.v);
         } else if (value.a = "r" && value.u != window.IronIde.userId) {
@@ -122,7 +123,11 @@ function init() {
         const data = snapshot.val();
         var operates = [];
         for (const [key, value] of Object.entries(data)) {
-            console.log(value.v);
+            operates.add(value)
+        }
+        console.log(operates);
+        while(operates.length > 0){
+            var value = operates.shift();
             if (value.a = "i") {
                 InsertInput(GetPosition(value.s.r, value.s.c),value.v);
             } else if (value.a = "r") {
@@ -139,7 +144,16 @@ function init() {
 
     //One of Ace managers
     function InsertInput(start,content){
-        editor.session.insert(GetPosition(row,0),content.join('\n'));
+        if(Array.isArray(content)){
+            editor.session.insert(start,content.shift());
+            var row = start.row;
+            while(content.length > 0){
+                row = row + 1;
+                editor.session.insert(GetPosition(row,0),content.shift());
+            }
+        }else if(typeof content === "string"){
+            editor.session.insert(start,content);
+        }
     }
 
     //One of Ace managers
