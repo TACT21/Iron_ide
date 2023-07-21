@@ -94,15 +94,14 @@ function init() {
         const data = snapshot.val();
         for (const [key, value] of Object.entries(data)) {
             console.log(value);
-            if (value.e) {
+            if (value.a = "i") {
+                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
+            } else if (value.a = "r" || value.e) {
                 Remove(
                     GetPosition(value.s.r, value.s.c),
                     GetPosition(value.e.r, value.e.c)
                 );
-            }else if (value.a = "i") {
-                console.log("insert");
-                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
-            } 
+            }
         }
         console.log("Chenges apply");
         done = true;

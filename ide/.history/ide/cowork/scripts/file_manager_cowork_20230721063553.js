@@ -114,7 +114,6 @@ onValue(dbRef, (snapshot) => {
     }else{
         CreateFile("newfile.py","");
     }
-},
-{onlyOnce:true});
+});
 
 console.log("IronIde file manager is loaded");

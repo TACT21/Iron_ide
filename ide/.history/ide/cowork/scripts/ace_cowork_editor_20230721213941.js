@@ -1,5 +1,4 @@
 var elementId = "editor"
-var done = false;
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
@@ -72,15 +71,44 @@ function init() {
     const dbRef = ref(database, 
         `${params.get("projectId")}/files/${params.get("fileId")}/history`);
 
+    //Add Key input Listener
+    editor.on("change", function (delta) {
+        console.log("chenge!");
+        var cursor = editor.getCursorPosition();
+        if ((delta.start.row === cursor.row) && (delta.start.column === cursor.column)) {
+            if (delta.action === "insert") {
+                push(dbRef,{
+                    a: "i",
+                    s: {
+                        r: delta.start.row,
+                        c: delta.start.column
+                    },
+                    v: delta.lines,
+                    u:window.IronIde.userId
+                });
+            } else if (delta.action === "remove") {
+                push(dbRef,{
+                    a: "r",
+                    s: {
+                        r: delta.start.row,
+                        c: delta.start.column
+                    },
+                    e: {
+                        r: delta.start.row,
+                        c: delta.start.column
+                    },
+                    u:window.IronIde.userId
+                });
+            }
+        }
+    });
 
     //Add Chenge Listener
     onChildAdded(dbRef, function (data) {
         var value = data.val()
-        if (done && value.a == "i" && value.u != window.IronIde.userId) {
-            console.log("cloud is chenged by anothor");
+        if (value.a = "i" && value.u != window.IronIde.userId) {
             InsertInput(GetPosition(value.s.r, value.s.c),value.v);
-        } else if (done && value.a == "r" && value.u != window.IronIde.userId) {
-            console.log("cloud is chenged by anothor");
+        } else if (value.a = "r" && value.u != window.IronIde.userId) {
             Remove(
                 GetPosition(value.s.r, value.s.c),
                 GetPosition(value.e.r, value.e.c)
@@ -92,38 +120,31 @@ function init() {
     //get File historys
     onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
+        var operates = [];
         for (const [key, value] of Object.entries(data)) {
-            console.log(value);
-            if (value.e) {
+            console.log(value.v);
+            if (value.a = "i") {
+                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
+            } else if (value.a = "r") {
                 Remove(
                     GetPosition(value.s.r, value.s.c),
                     GetPosition(value.e.r, value.e.c)
                 );
-            }else if (value.a = "i") {
-                console.log("insert");
-                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
-            } 
+            }
         }
-        console.log("Chenges apply");
-        done = true;
+        
     },
     {onlyOnce:true});
 
+
     //One of Ace managers
     function InsertInput(start,content){
-        var value = "";
-        if(Array.isArray(content)){
-            value = content.join('\n')
-        }else if(typeof content == "string"){
-            value = content;
-        }
-        editor.session.insert(start,value);
+        editor.session.insert(start,content.join('\n'));
     }
 
     //One of Ace managers
     function Remove(start,end){
-        console.log("rv");
-        editor.session.remove({start:start,end:end});
+        editor.session.remove(start,end);
     }
 
     function GetPosition(row,column){
@@ -132,48 +153,4 @@ function init() {
             column:column
         }
     }
-    //Add Key input Listener
-    var d = null;
-    var cursor = null;
-    document.body.addEventListener('keyup',
-    event => {
-        console.log("cloud is chenged by me");
-        if (done && d) {
-            if ((d.start.row === cursor.row) && (d.start.column === cursor.column) && d.action === "insert") {
-                push(dbRef,{
-                    a: "i",
-                    s: {
-                        r: d.start.row,
-                        c: d.start.column
-                    },
-                    v: d.lines,
-                    u:window.IronIde.userId
-                });
-            } 
-        }
-    });
-
-    editor.on("change", function (delta) {
-        d = null;
-        cursor = editor.getCursorPosition();
-        if (done && (delta.start.row === cursor.row) && (delta.start.column === cursor.column)) {
-            if (delta.action === "insert") {
-                d = delta;
-            } else if (delta.action === "remove") {
-                console.log("cloud is chenged by me");
-                push(dbRef,{
-                    a: "r",
-                    s: {
-                        r: delta.start.row,
-                        c: delta.start.column
-                    },
-                    e: {
-                        r: delta.end.row,
-                        c: delta.end.column
-                    },
-                    u:window.IronIde.userId
-                });
-            }
-        }
-    });
 }

@@ -76,11 +76,10 @@ function init() {
     //Add Chenge Listener
     onChildAdded(dbRef, function (data) {
         var value = data.val()
+        console.log(value.u);
         if (done && value.a == "i" && value.u != window.IronIde.userId) {
-            console.log("cloud is chenged by anothor");
             InsertInput(GetPosition(value.s.r, value.s.c),value.v);
         } else if (done && value.a == "r" && value.u != window.IronIde.userId) {
-            console.log("cloud is chenged by anothor");
             Remove(
                 GetPosition(value.s.r, value.s.c),
                 GetPosition(value.e.r, value.e.c)
@@ -93,16 +92,15 @@ function init() {
     onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
         for (const [key, value] of Object.entries(data)) {
-            console.log(value);
-            if (value.e) {
+            console.log(value.v);
+            if (value.a = "i") {
+                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
+            } else if (value.a = "r") {
                 Remove(
                     GetPosition(value.s.r, value.s.c),
                     GetPosition(value.e.r, value.e.c)
                 );
-            }else if (value.a = "i") {
-                console.log("insert");
-                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
-            } 
+            }
         }
         console.log("Chenges apply");
         done = true;
@@ -122,7 +120,6 @@ function init() {
 
     //One of Ace managers
     function Remove(start,end){
-        console.log("rv");
         editor.session.remove({start:start,end:end});
     }
 
@@ -132,35 +129,30 @@ function init() {
             column:column
         }
     }
+
+    var input = false;
+
+    document.body.addEventListener('keydown',
+    event => {        
+        input = true;
+    });
+
     //Add Key input Listener
-    var d = null;
-    var cursor = null;
-    document.body.addEventListener('keyup',
-    event => {
-        console.log("cloud is chenged by me");
-        if (done && d) {
-            if ((d.start.row === cursor.row) && (d.start.column === cursor.column) && d.action === "insert") {
+    editor.on("change", function (delta) {
+        console.log("chenge!");
+        var cursor = editor.getCursorPosition();
+        if (done && (delta.start.row === cursor.row) && (delta.start.column === cursor.column)) {
+            if (delta.action === "insert") {
                 push(dbRef,{
                     a: "i",
                     s: {
-                        r: d.start.row,
-                        c: d.start.column
+                        r: delta.start.row,
+                        c: delta.start.column
                     },
-                    v: d.lines,
+                    v: delta.lines,
                     u:window.IronIde.userId
                 });
-            } 
-        }
-    });
-
-    editor.on("change", function (delta) {
-        d = null;
-        cursor = editor.getCursorPosition();
-        if (done && (delta.start.row === cursor.row) && (delta.start.column === cursor.column)) {
-            if (delta.action === "insert") {
-                d = delta;
             } else if (delta.action === "remove") {
-                console.log("cloud is chenged by me");
                 push(dbRef,{
                     a: "r",
                     s: {
@@ -175,5 +167,6 @@ function init() {
                 });
             }
         }
+        input = false;
     });
 }

@@ -93,16 +93,15 @@ function init() {
     onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
         for (const [key, value] of Object.entries(data)) {
-            console.log(value);
-            if (value.e) {
+            console.log(value.v);
+            if (value.a = "i") {
+                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
+            } else if (value.a = "r") {
                 Remove(
                     GetPosition(value.s.r, value.s.c),
                     GetPosition(value.e.r, value.e.c)
                 );
-            }else if (value.a = "i") {
-                console.log("insert");
-                InsertInput(GetPosition(value.s.r, value.s.c),value.v);
-            } 
+            }
         }
         console.log("Chenges apply");
         done = true;
@@ -122,7 +121,6 @@ function init() {
 
     //One of Ace managers
     function Remove(start,end){
-        console.log("rv");
         editor.session.remove({start:start,end:end});
     }
 
@@ -175,5 +173,6 @@ function init() {
                 });
             }
         }
+        input = false;
     });
 }
