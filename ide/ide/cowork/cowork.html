@@ -26,6 +26,7 @@
     </script>
     <script src="./scripts/cowork.js"></script>
     <script type="module" src="./scripts/file_manager_cowork.js"></script>
+    <script type="module" src="./scripts/cowork_prjdetail.js"></script>
     <script src="../shered/scripts/page_caller.js"></script>
     <link rel="stylesheet" href="../shered/styles/file_piker.css">
     <link rel="stylesheet" href="../shered/styles/gernal.css">
@@ -45,14 +46,16 @@
 <body>
     <section class="Header">
         <div style="display: none;">
-            <button id="Btnfile" onclick="PaletChenge('file')"></button>
+            <button id="Btnfile" onclick="PaletChenge('Filer')"></button>
             <button id="Btnchat" onclick="PaletChenge('chat')"></button>
             <button id="Btnwork" onclick="PaletChenge('projectDetail')"></button>
         </div>
-        <div>
-            <label for="Btnfile"></label>
-            <label for="Btnchat"></label>
-            <label for="Btnwork"></label>
+        <div class="comand_pallet warp">
+            <div class="btns comand_pallet warp">
+                <label class="comand_pallet item" for="Btnfile"><img src="../img/7.jpg" alt="Upload" /></label>
+                <label class="comand_pallet item" for="Btnchat"><img src="../img/6.jpg" alt="Upload" /></label>
+                <label class="comand_pallet item" for="Btnwork"><img src="../img/8.jpg" alt="Upload" /></label>
+            </div>
         </div>
     </section>
     <section class="debug_comands warp">
@@ -60,7 +63,7 @@
             <button class="debug_comands item" onclick="EngineCall()"><span>Run</span></button>
         </div>
         <div class="names">
-            <input type="text" id="fileName"></p>
+            <input type="text" id="fileName">
             <button onclick="Rename()">Rename</button>
             <button onclick="Delete()">Delete</button>
         </div>
@@ -81,7 +84,7 @@
             <div id="FileList" class="files list warp">
             </div>
         </article>
-        <iframe id="chat"  frameborder="0" src="../chat"></iframe>
+        <iframe id="chat" frameborder="0" src="../chat"></iframe>
         <article id="projectDetail">
 
         </article>

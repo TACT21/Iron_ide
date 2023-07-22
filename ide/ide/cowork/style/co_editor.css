@@ -62,4 +62,19 @@ header{
     right: 0%;
 }
 
+.btns{
+    position: absolute;
+    top:50px;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    height: auto;
+}
 
+.btns > label{
+    display: inline;
+}
+
+.Header > .comand_pallet{
+    position: relative;
+}
