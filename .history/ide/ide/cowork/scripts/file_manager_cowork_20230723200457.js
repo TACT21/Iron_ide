@@ -36,7 +36,7 @@ const dbRef = ref(database, `${params.get("projectId")}/files`);
 //Add File Add Listener
 onChildAdded(dbRef, function (data) {
     AppendFile(data.key,data.val()["name"])
-    files[data.key] = data.val()["name"];
+    files[data.key] = data.val();
 });
 
 //Add File Remove Listener

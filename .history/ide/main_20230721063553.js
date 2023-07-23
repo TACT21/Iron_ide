@@ -5,7 +5,6 @@ import { dotnet } from './dotnet.js'
 
 var script = "";
 var receve = false;
-var test = false;
 
 window.addEventListener('message', function (e) {
     switch (e.data.action) {
@@ -30,17 +29,6 @@ while (true) {
     }
 }
 
-const params = new URLSearchParams(window.location.search.substring(1));
-if(params.get("test")){
-    test = true;
-    window.addEventListener('message', function (e) {
-        switch (e.data.action) {
-            case 'GiveInput':
-                document.getElementById('input_result').innerText = e.data.message;
-                break;
-        }
-    });
-}
 
 const { setModuleImports, getAssemblyExports, getConfig } = await dotnet
     .withDiagnosticTracing(false)
@@ -95,22 +83,11 @@ function GetInput() {
 
 function AddConsole(e) {
     document.getElementById('console').innerHTML += (e + "<br/>")
-    window.parent.postMessage({
-        action: 'print',
-        message: e
-    }, '*',);
 }
 
 function Asq(e) {
-    if(test){        
-        window.parent.postMessage({
-            action: 'asq',
-            message: e
-        }, '*',);
-    }else{
-        document.getElementById('input').style.display = "block";
-        document.getElementById('order').innerHTML = e;
-    }
+    document.getElementById('input').style.display = "block";
+    document.getElementById('order').innerHTML = e;
 }
 
 function sleep(milliSeconds) {

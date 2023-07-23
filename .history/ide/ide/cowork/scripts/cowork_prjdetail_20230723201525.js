@@ -36,7 +36,7 @@ onValue(
     function(snapshot){
         const data = snapshot.val();
         if(data){
-            document.getElementById("projectDetailContent").innerHTML = data;
+            document.getElementById("projectDetail").innerHTML = data;
         }
     }
 )
@@ -46,12 +46,7 @@ onValue(
     function(snapshot){
         const data = snapshot.val();
         if(data){
-            var script = document.createElement("script");
-            script.src = "./scripts/compere.js"
-            script.type = "module"
-            document.head.appendChild(script);
-            window.IronIde.TestScript = data;
-            document.getElementById("projectDetailContent").innerHTML += "<br/><button style='btn' onclick='window.IronIde.compere()'></button>";
+            document.getElementById("projectDetail").innerHTML += "<br/><button style='btn' onclick='window.IronIde.compere()'></button>";
         }
     }
 )

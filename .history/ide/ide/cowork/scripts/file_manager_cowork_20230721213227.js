@@ -16,8 +16,6 @@ const firebaseConfig = {
     measurementId: "G-7PSWR5K3PE"
 };
 
-var files = {};
-
 if(!(window.IronIde)){
     window.IronIde = {};
 }
@@ -36,7 +34,6 @@ const dbRef = ref(database, `${params.get("projectId")}/files`);
 //Add File Add Listener
 onChildAdded(dbRef, function (data) {
     AppendFile(data.key,data.val()["name"])
-    files[data.key] = data.val()["name"];
 });
 
 //Add File Remove Listener
@@ -73,11 +70,10 @@ window.IronIde.Delete = async function () {
 function chengeFile(aim) {
     document.getElementById("editor").src=`./cowork_editor.html?projectId=${params.get("projectId")}&fileId=${aim}`
     currentFileName = aim;
-    document.getElementById("fileName").value = files[aim];
+    document.getElementById("fileName").value = aim;
 }
 
 function AppendFile(path,name) {
-    console.log("ADD BTN!");
     const addButton = document.createElement('button');
     addButton.classList.add("file");
     addButton.classList.add("list");
@@ -87,8 +83,6 @@ function AppendFile(path,name) {
     document.getElementById("FileList").appendChild(addButton)
     chengeFile(path);
 }
-
-window.IronIde.chengeFile = chengeFile;
 
 window.IronIde.newFileSaver = function () {
     CreateFile("newfile.py","");
@@ -113,7 +107,11 @@ function CreateFile(name,content){
 //Take File List
 onValue(dbRef, (snapshot) => {
     const data = snapshot.val();
-    if(!data){
+    if(data){
+        for (const [key, value] of Object.entries(data)) {
+            AppendFile(key,data[key]["name"])
+        }
+    }else{
         CreateFile("newfile.py","");
     }
 },

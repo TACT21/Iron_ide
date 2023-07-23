@@ -6,7 +6,7 @@
     var elem = document.getElementById("prompt");
     var iframe = document.createElement('iframe');
     iframe.id = "promptfream";
-    iframe.src = "../../console.html"
+    iframe.src = "./console.html"
     iframe.style.width = "100%";
     iframe.style.height = "calc(300px - 2rem)";
     iframe.style.position = "absolute";
