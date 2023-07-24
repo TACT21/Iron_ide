@@ -56,8 +56,4 @@ onValue(
     }
 )
 
-window.IronIde.EditMd = function(){
-    document.getElementById("editor").src="./md_editor.html"
-}
-
 console.log("The module named projectDetail is loaded");

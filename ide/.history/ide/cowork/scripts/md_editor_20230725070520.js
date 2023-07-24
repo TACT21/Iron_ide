@@ -19,7 +19,7 @@ const firebaseConfig = {
     appId: "1:270835211248:web:513dc7ed225f9cb5d99b35",
     measurementId: "G-7PSWR5K3PE"
 };
-const params = new URLSearchParams(document.location.search.substring(1));
+const params = new URLSearchParams(window.parent.document.location.search.substring(1));
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
@@ -37,7 +37,7 @@ if(params.get("fileId") && params.get("projectId")){
 
 
 function init() {
-    EnableRename();
+    DisableRename();
     if(!(window.IronIde)){
         window.IronIde = {};
     }
@@ -72,7 +72,7 @@ function init() {
 
 
     const dbRef = ref(database, 
-        `${params.get("projectId")}/files/${params.get("fileId")}/history`);
+        `${params.get("projectId")}/detail}`);
 
 
     //Add Chenge Listener
@@ -177,5 +177,16 @@ function init() {
                 });
             }
         }
+        var html = marked(window.parent.IronIde.getValue());
+        document.getElementById("preview").innerHTML = html;
     });
+
+    marked.setOptions({
+        // code要素にdefaultで付くlangage-を削除
+        langPrefix: '',
+        // highlightjsを使用したハイライト処理を追加
+        highlight: function (code, lang) {
+          return hljs.highlightAuto(code, [lang]).value
+        }
+      });
 }
