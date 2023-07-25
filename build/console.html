@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!--  Licensed to the .NET Foundation under one or more agreements. -->
+<!-- The .NET Foundation licenses this file to you under the MIT license. -->
+<html>
+
+<head>
+    <title>IronIde</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type='module' src="./main.js"></script>
+    <link rel="stylesheet" href="Console.css" />
+    <script>
+        function InputSet() {
+            document.getElementById('input').style.display = "none";
+            document.getElementById('asq_result').innerText = document.getElementById('order').innerText;
+            document.getElementById('input_result').innerText = document.getElementById("consoleInput").value;
+        }
+    </script>
+</head>
+    <body>
+        <div class="deta_bridge">
+            <p id="input_result"></p>
+            <p id="asq_result"></p>
+        </div>
+        <div id="prompt">
+            <code id="console"></code>
+            <section id="input">
+                <p id="order"></p><input id="consoleInput" /><button onclick="InputSet()">Submit</button>
+            </section>
+        </div>
+    </body>
+
+</html>

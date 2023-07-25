@@ -1,0 +1,80 @@
+﻿html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    height: 100%;
+    position: relative;
+    display: grid;
+    grid-template-rows: 4rem 1fr;
+    grid-template-columns: 300px 1fr;
+}
+/* Height / width / positioning can be customized for your use case.
+            For demo purposes, we make firepad fill the entire browser. */
+#editor {
+    width: 100%;
+    height:100%;
+}
+
+
+header{
+    height :4rem;
+    margin:0;
+    padding:0;
+    text-align:center;
+}
+
+#prompt{
+    z-index:1000;
+}
+#Palet{
+    position: relative;  
+}
+#Palet > *{
+    position: absolute;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: #fffffe;
+}
+
+.debug_comands.warp{
+    position: relative;   
+}
+
+.names{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.comands{
+    position: absolute;
+    top: 50%;
+    left: 0%;
+}
+
+.login{
+    position: absolute;
+    top: 50%;
+    right: 0%;
+}
+
+.btns{
+    position: absolute;
+    top:50px;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    -webkit-transform: translateY(-50%) translateX(-50%);
+    height: auto;
+}
+
+.btns > label{
+    display: inline;
+}
+
+.Header > .comand_pallet{
+    position: relative;
+}
