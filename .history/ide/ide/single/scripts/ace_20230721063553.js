@@ -15,7 +15,7 @@ function init() {
         enableSnippets: true,
         enableLiveAutocompletion: true
     });
-    editor.setTheme("ace/theme/tomorrow");
+    editor.setTheme("ace/theme/github");
     editor.getSession().setMode("ace/mode/python");
     window.IronIde = {};
     window.IronIde.getValue = function () {

@@ -25,15 +25,19 @@ const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
 const database = getDatabase(app);
 
-if(params.get("projectId")){
+if(params.get("fileId") && params.get("projectId")){
+    document.getElementById("NoHere").style.display = "none";
+    if(window.IronIde){
+        window.IronIde = {};
+    }
     window.addEventListener("load", init)
 }else{
-    alert("プロジェクトIDが設定されていません。")
+    document.getElementById("editor").style.display = "none";
 }
 
 
 function init() {
-    window.parent.IronIde.DisableRename();
+    DisableRename();
     if(!(window.IronIde)){
         window.IronIde = {};
     }
@@ -54,7 +58,7 @@ function init() {
     var editor;
     //// Create ACE
     editor = ace.edit(elementId);
-    editor.setTheme("ace/theme/monokai");
+    editor.setTheme("ace/theme/textmate");
     var session = editor.getSession();
     session.setUseWrapMode(true);
     session.setUseWorker(false);
@@ -86,7 +90,7 @@ function init() {
         }
     });
 
-
+    
     //get File historys
     onValue(dbRef, (snapshot) => {
         const data = snapshot.val();
@@ -147,7 +151,6 @@ function init() {
                     v: d.lines,
                     u:window.IronIde.userId
                 });
-                d = null;
             } 
         }
     });
@@ -174,7 +177,7 @@ function init() {
                 });
             }
         }
-        var html = marked(editor.getValue());
+        var html = marked(window.parent.IronIde.getValue());
         document.getElementById("preview").innerHTML = html;
     });
 
@@ -183,7 +186,7 @@ function init() {
         langPrefix: '',
         // highlightjsを使用したハイライト処理を追加
         highlight: function (code, lang) {
-            return hljs.highlightAuto(code, [lang]).value
+          return hljs.highlightAuto(code, [lang]).value
         }
-    });
+      });
 }
