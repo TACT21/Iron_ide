@@ -1,0 +1,21 @@
+{
+    "globalHeaders": {
+        "Cross-Origin-Opener-Policy":"same-origin",
+        "Cross-Origin-Embedder-Policy":"require-corp"
+    },
+    "responseOverrides": {
+        "400": {
+          "rewrite": "/ide/error/400.html"
+        },
+        "401": {
+          "statusCode": 302,
+          "redirect": "/ide/error/401.html"
+        },
+        "403": {
+          "rewrite": "/ide/error/403.html"
+        },
+        "404": {
+          "rewrite": "/ide/error/404.html"
+        }
+      }
+}
