@@ -1,4 +1,5 @@
-﻿// キャッシュファイルの指定
+﻿var cacheName = 'IronIde 0.0.1';
+// キャッシュファイルの指定
 var CACHE_NAME = 'IronIde';
 var urlsToCache = [
     "/Console.css",
