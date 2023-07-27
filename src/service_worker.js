@@ -10,7 +10,6 @@ var urlsToCache = [
     "/dotnet.timezones.blat",
     "/dotnet.wasm",
     "/dotnet.worker.js",
-    "/Engine.cs",
     "/file_list.txt",
     "/icudt_CJK.dat",
     "/icudt_EFIGS.dat",
