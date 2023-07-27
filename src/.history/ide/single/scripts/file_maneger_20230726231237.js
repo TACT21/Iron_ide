@@ -58,8 +58,8 @@ async function rename() {
 }
 
 function chengeFile(aim) {
-    sessonStorageSave(currentFileName, window.IronIde.getValue());
-    window.IronIde.setValue(sessonStorageRead(aim));
+    sessonStorageSave(currentFileName, aceGetValue());
+    aceSetValue(sessonStorageRead(aim));
     currentFileName = aim;
     document.getElementById("fileName").innerText = aim;
 }

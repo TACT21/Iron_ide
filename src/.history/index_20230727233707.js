@@ -28,6 +28,6 @@ if ('serviceWorker' in navigator) {
   }
   
 // Login to project
-function LoginPrj(e){
-    document.location = `${document.location.origin}/ide/cowork/cowork.html?projectId=${document.getElementById(e).value}`
+function LoginPrj(){
+    document.location = `${document.location.origin}/ide/cowork/cowork.html?projectId=${document.getElementById("prjId").value}`
 }

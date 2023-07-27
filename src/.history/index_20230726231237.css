@@ -55,10 +55,19 @@ body{
     color: #fffffe;
 }
 
-header {
-  position: relative;
-  height: 240px;
-  background-image: linear-gradient(#9437FF, #7A81FF);
-  border-bottom-left-radius: 50% 20%;
-  border-bottom-right-radius: 50% 20%;
+.btn {
+  display: inline-block;
+  padding: 0.1em 1em;
+  text-decoration: none;
+  color: #004643;
+  border: solid 2px #abd1c6;
+  border-radius: 3px;
+  transition: .4s;
+  margin-bottom: .2rem;
+}
+
+.btn:hover {
+  background: #004643;
+  color: #abd1c6;
+  border: solid 2px #004643;
 }
