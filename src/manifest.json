@@ -2,7 +2,7 @@
   "short_name": "Iron IDE",
   "name": "Iron Python Ide",
   "display": "standalone",
-  "start_url": "editor.html",
+  "start_url": "index.html",
   "icons": [
     {
       "src": "rogo.png",

@@ -6,13 +6,20 @@
     <title>Chat</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <link type="text/css" rel="stylesheet" href="./chat.css" />
-    <script src="./chat.js"></script>
+    <script src="./chat_fireBase.js" type="module"></script>
+    <script>
+        function Send(){
+            window.IronIde.chat(
+                document.getElementById("bms_send_message").value
+            )
+            document.getElementById("bms_send_message").value = "";
+        }
+    </script>
 </head>
 <body>
     <div id="your_container">
             <div id="bms_messages">                
             </div>
-
             <!-- テキストボックス、送信ボタン④ -->
             <div id="bms_send">
                 <input id="bms_send_message"></input>

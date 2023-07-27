@@ -4,22 +4,6 @@
     <meta charset="utf-8" />
     <title>IronPython</title>
     <link rel="icon" href="rogo.png" sizes="any" />
-    <script>
-        //URL Params Manager
-        const params = new URLSearchParams(document.location.search.substring(1));
-        if(!(params.get("projectId"))){
-            alert("プロジェクトIDが設定されていません。")
-            document.location = document.location.origin + "/"
-        }
-    </script>
-    <script src="./scripts/cowork.js"></script>
-    <script type="module" src="./scripts/file_manager_cowork.js"></script>
-    <script type="module" src="./scripts/cowork_prjdetail.js"></script>
-    <script src="../shered/scripts/page_caller.js"></script>
-    
-    <link rel="stylesheet" href="../shered/styles/file_piker.css">
-    <link rel="stylesheet" href="../shered/styles/gernal.css">
-    <link rel="stylesheet" href="./style/co_editor.css">
     <style>
         .prompt {
             width: 100%;
@@ -32,7 +16,21 @@
             overflow: hidden;
         }
     </style>
-    
+    <script>
+        //URL Params Manager
+        const params = new URLSearchParams(document.location.search.substring(1));
+        if(!(params.get("projectId"))){
+            alert("プロジェクトIDが設定されていません。")
+            document.location = document.location.origin + "/"
+        }
+    </script>
+    <script src="./scripts/cowork.js"></script>
+    <script type="module" src="./scripts/file_manager_cowork.js"></script>
+    <script type="module" src="./scripts/cowork_prjdetail.js"></script>
+    <script src="../shered/scripts/page_caller.js"></script>
+    <link rel="stylesheet" href="../shered/styles/file_piker.css">
+    <link rel="stylesheet" href="../shered/styles/gernal.css">
+    <link rel="stylesheet" href="./style/co_editor.css">
     <script>
         function Rename(){
             window.IronIde.Rename();
@@ -45,9 +43,6 @@
         }
         function chengeFile(e){
             window.IronIde.chengeFile(e);
-        }
-        function EditMd(){
-            window.IronIde.EditMd();
         }
     </script>
 </head>
@@ -92,13 +87,9 @@
             <div id="FileList" class="files list warp">
             </div>
         </article>
-        <iframe id="chat" frameborder="0" src="../chat/chat.html"></iframe>
+        <iframe id="chat" frameborder="0" src="../chat"></iframe>
         <article id="projectDetail">
             <div id="projectId"></div>
-            <div class="detail btns warp">
-                <button class="detail btn" id="examBtn" onclick="window.IronIde.compere()">Compere</button>
-                <button class="detail btn" onclick="EditMd()">Edit</button>
-            </div>
         </article>
     </section>
     <iframe id="editor" frameborder="0" class="edit" src="./cowork_editor.html"></iframe>
