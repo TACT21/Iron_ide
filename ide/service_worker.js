@@ -8,7 +8,6 @@ var urlsToCache = [
     "/dotnet.timezones.blat",
     "/dotnet.wasm",
     "/dotnet.worker.js",
-    "/Engine.cs",
     "/img1.png",
     "/img2.png",
     "/index.css",
