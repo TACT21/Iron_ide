@@ -5,7 +5,7 @@ if ('serviceWorker' in navigator) {
       // 登録中の SW がなければ、これが初回登録である
       const firstRegistration = (registration === undefined);
       // SW を登録する
-      navigator.serviceWorker.register('sw.js')
+      navigator.serviceWorker.register("service_worker.js")
       .then(registration => {
         // 初回登録でなければ更新が見つかったかチェックする
         if (!firstRegistration) {
@@ -26,6 +26,7 @@ if ('serviceWorker' in navigator) {
       });
     });
   }
+  
 // Login to project
 function LoginPrj(){
     document.location = `${document.location.origin}/ide/cowork/cowork.html?projectId=${document.getElementById("prjId").value}`
