@@ -1,4 +1,4 @@
-﻿var cacheName = 'IronIde 0.0.2';
+﻿var cacheName = 'IronIde 0.0.3';
 // キャッシュファイルの指定
 var CACHE_NAME = 'IronIde';
 var urlsToCache = [
@@ -23,7 +23,6 @@ var urlsToCache = [
     "/main.js",
     "/mono-config.json",
     "/rogo.png",
-    "/service_worker.js",
     "/service_worker.js",
     "/ide/img/1.jpg",
     "/ide/img/2.jpg",
