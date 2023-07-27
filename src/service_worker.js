@@ -1,4 +1,4 @@
-﻿var cacheName = 'IronIde 0.0.1';
+﻿var cacheName = 'IronIde 0.0.2';
 // キャッシュファイルの指定
 var CACHE_NAME = 'IronIde';
 var urlsToCache = [
