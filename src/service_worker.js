@@ -213,8 +213,6 @@ var urlsToCache = [
     "/managed/WindowsBase.dll",
     "/supportFiles/0_runtimeconfig.bin",
     "/supportFiles/1_dotnet.js.symbols",
-    '/page_caller.js',
-    "/file_maneger.js",
     "https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js",
     "https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js",
 ];
