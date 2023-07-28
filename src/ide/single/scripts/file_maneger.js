@@ -65,6 +65,7 @@ function chengeFile(aim) {
 }
 
 function newFileSaver(path, content) {
+    console.log(path);
     sessonStorageSave(path, content);
     files.push(path);
     const addButton = document.createElement('button');
@@ -102,6 +103,7 @@ function localStorageRead(id) {
 }
 
 function fileZipper() {
+    Hide();
     if (document.getElementById("JsZip")){
         var zip = new JSZip();
         files.forEach((e) => {
@@ -123,9 +125,11 @@ function fileZipper() {
 }
 
 function projFileSaver(isDownload = false) {
+    Hide();
+    console.log("making json");
     var json = []
     files.forEach((e) => {
-        json.add(
+        json.push(
             {
                 "name": e,
                 "content": sessonStorageRead(e)
@@ -139,9 +143,16 @@ function projFileSaver(isDownload = false) {
 }
 
 function projFileLoader(json) {
+    document.getElementById("FileList").innerHTML ="";
+    sessionStorage.clear()
     var proj = JSON.parse(json);
     proj.forEach((e) => {
-        newFileSaver(e.nane, e.content)
+        console.log(e);
+        if(e.name != "test" && e.name != "detail"){
+            newFileSaver(e.name, e.content);
+        }else{
+            sessonStorageSave(e.name, e.content);
+        }
     })
 }
 
@@ -150,7 +161,7 @@ function projFileLoadHelper() {
     input.type = "file";
     input.addEventListener("input", function (e) {
         let reader = new FileReader();
-        reader.readAsText(e.target.files);
+        reader.readAsText(e.target.files[0]);
         reader.addEventListener("load", () => {
             projFileLoader(reader.result);
         });
@@ -159,6 +170,7 @@ function projFileLoadHelper() {
 }
 
 function downLoadHelper(content, name) {
+    console.log("downloading");
     if (document.getElementById("FileSaver")) {
         if (typeof (saveAs) == "function") {
             saveAs(content, name);
