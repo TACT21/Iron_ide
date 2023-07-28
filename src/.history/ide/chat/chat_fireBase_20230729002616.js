@@ -53,18 +53,20 @@ window.IronIde.chat = function(mess){
 
 onChildAdded(dbRef, function (data) {
     var value = data.val()
-    if (value.u == window.IronIde.userId) {
-        console.log("Chat add me!");
+    if (value.u != window.IronIde.userId) {
         document.getElementById("bms_messages")
-        MakeMassageElement(value.m,value.u).classList.add("bms_right")
-    } else if (value.u != window.IronIde.userId) {
-        console.log("Chat add other!");
+        .appendChild(
+            MakeMassageElement(value.m,value.u).classList.add("bms_right")
+        );
+    } else if (value.a == "r" && value.u != window.IronIde.userId) {
         document.getElementById("bms_messages")
-        MakeMassageElement(value.m,value.u).classList.add("bms_left")
+        .appendChild(
+            MakeMassageElement(value.m,value.u).classList.add("bms_left")
+        );
     }
 });
 
-function MakeMassageElement(mess,name){
+function MakeMassageElement(content,name){
     var card = document.createElement("div");
     card.classList.add("bms_message");
     if(name){
@@ -79,10 +81,9 @@ function MakeMassageElement(mess,name){
 
     var text = document.createElement("div");
     text.classList.add("bms_message_text");
-    text.innerText = mess;
 
     content.appendChild(text);
     card.appendChild(content);
 
-    return document.getElementById("bms_messages").appendChild(card);
+    return card;
 }
