@@ -1,9 +1,9 @@
 ﻿:root{
-    --main-color:#abd1c6;
-    --base-color:#004643;
+    --main-color:#4F81BD;
+    --sub-color:#6CE5E8;
+    --base-color:#6C6F84;
     --font-color:#fffffe;
     --accent-color:#f9bc60;
-
 }
 
 .btn {
@@ -21,4 +21,13 @@
     background: var(--base-color);
     color: var(--font-color);
     border: solid 2px var(--base-color);
+  }
+
+  body,html{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
   }

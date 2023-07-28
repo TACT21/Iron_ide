@@ -51,14 +51,31 @@
 }
 
 body{
-    background-color: #004643;
-    color: #fffffe;
+    background-color: var(--font-color);
+    color: #000;
 }
 
-header {
+header{
   position: relative;
-  height: 240px;
-  background-image: linear-gradient(#9437FF, #7A81FF);
-  border-bottom-left-radius: 50% 20%;
-  border-bottom-right-radius: 50% 20%;
+  top:0;
+  height: 100vh;
+  border-bottom-left-radius: 50% 5%;
+  border-bottom-right-radius: 50% 5%;
+  color: #000001;
+  text-align: center;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  background-image: linear-gradient(var(--sub-color),var(--main-color));
+}
+
+header .btn{
+  background-color: var(--font-color);
+}
+
+header > *{
+  margin-top: auto;
+  margin-bottom: auto;
+  width: 45%;
+  max-width: 45vh;
 }

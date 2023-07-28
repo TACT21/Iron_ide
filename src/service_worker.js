@@ -1,4 +1,4 @@
-﻿var cacheName = 'IronIde 0.0.3';
+﻿var cacheName = 'IronIde 0.0.4';
 // キャッシュファイルの指定
 var CACHE_NAME = 'IronIde';
 var urlsToCache = [
@@ -227,26 +227,72 @@ var urlsToCache = [
 
 // インストール処理
 self.addEventListener('install', function (event) {
-    event.waitUntil(
-        caches
-            .open(CACHE_NAME)
-            .then(function (cache) {
-                try{
-                    return cache.addAll(urlsToCache);
-                }catch(e){
-                    console.log(e);
-                }
-            })
-    );
+    if(self.location.origin.indexOf("127.0.0.1") == -1){
+        event.waitUntil(
+            caches
+                .open(CACHE_NAME)
+                .then(function (cache) {
+                    try{
+                        return cache.addAll(urlsToCache);
+                    }catch(e){
+                        console.log(e);
+                    }
+                })
+        );
+    }
+});
+
+self.addEventListener('activate', (event) => {
+    if(self.location.origin.indexOf("127.0.0.1") == -1){
+        event.waitUntil(
+            caches
+                .open(CACHE_NAME)
+                .then(function (cache) {
+                    try{
+                        return cache.addAll(urlsToCache);
+                    }catch(e){
+                        console.log(e);
+                    }
+                })
+        );
+    }
 });
 
 // リソースフェッチ時のキャッシュロード処理
 self.addEventListener('fetch', function (event) {
-    event.respondWith(
-        caches
-            .match(event.request)
-            .then(function (response) {
-                return response ? response : fetch(event.request);
-            })
-    );
+    if(self.location.origin.indexOf("127.0.0.1") == -1){
+        event.respondWith(
+            caches
+                .match(event.request)
+                .then(function (response) {
+                    return response ? response : fetch(event.request);
+                })
+        );
+    }
 });
+
+/*caches.match("/Console.css").then(function(e){
+    var i = null;
+    iterator = e.headers.keys()
+    while(true){
+        iteratorResult = iterator.next(); // 順番に値を取りだす
+        if(iteratorResult.done) break; // 取り出し終えたなら、break
+        if(iteratorResult.value == "date"){
+            break
+        }
+        i = i + 1;
+    }
+    if(i){
+        var index = 0;
+        iterator = e.headers.values()
+        while(true){
+            iteratorResult = iterator.next(); // 順番に値を取りだす
+            if(iteratorResult.done) break; // 取り出し終えたなら、break
+            if(index === i){
+                var date = new Date(iteratorResult.value)
+                console.log(date.toUTCString());
+            }
+            index = index + 1;
+        }
+    }
+})*/
