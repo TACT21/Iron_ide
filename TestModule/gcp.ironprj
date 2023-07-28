@@ -1,1 +1,5 @@
-[{"name":"file01.py","content":"print(\"gcp\")"},{"name":"fife02.py","content":"undefined"}]
+[
+    {"name":"file01.py","content":"print(\"gcp\")"},
+    {"name":"fife02.py","content":"undefined"},
+    {"name":"result","content":"gcp"}    
+]
