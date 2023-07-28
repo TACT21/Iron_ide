@@ -224,6 +224,7 @@ var urlsToCache = [
     "/supportFiles/1_dotnet.js.symbols",
     "https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js",
     "https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ext-language_tools.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"
 ];
 
 // インストール処理
