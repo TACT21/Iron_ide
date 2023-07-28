@@ -38,6 +38,7 @@ var urlsToCache = [
     "/ide/single/editor.html",
     "/ide/single/scripts/ace.js",
     "/ide/single/scripts/file_maneger.js",
+    "/ide/single/scripts/compere.js",
     "/ide/single/styles/Editor.css",
     "/managed/IronIde.dll",
     "/managed/IronIde.pdb",
@@ -244,6 +245,7 @@ self.addEventListener('install', function (event) {
 
 self.addEventListener('activate', (event) => {
     if(self.location.origin.indexOf("127.0.0.1") == -1){
+
         event.waitUntil(
             caches
                 .open(CACHE_NAME)
