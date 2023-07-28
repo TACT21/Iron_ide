@@ -21,7 +21,7 @@ if(!(window.IronIde)){
 }
 
 //URL Params Manager
-const params = new URLSearchParams(window.location.search.substring(1));
+const params = new URLSearchParams(window.opener.document.location.search.substring(1));
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
