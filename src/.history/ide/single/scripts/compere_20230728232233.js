@@ -1,19 +1,9 @@
 var inputs = [];
-var answer
 function Compere(){
-    if(localStorageRead("result")){
-        answer = localStorageRead("result");
-        exameeDoTask();
-        return;
-    }
-    const ConsoleWrap = document.getElementById("prompt");
-    if(!(ConsoleWrap)){
+    if(!(document.getElementById("prompt"))){
         alert("実行環境展開場所が存在しません。再読み込みしてください。")
         return;
     }
-    ConsoleWrap.getElementsByTagName("iframe").array.forEach(element => {
-        element.remove();
-    });
     document.getElementById("EngineStoper").classList.add("hide");
     var fream = document.getElementById("promptfream");
     if (fream) {
@@ -46,10 +36,7 @@ function Compere(){
 }
 
 function exameeDoTask(){
-    if(testerInputManager){
-        window.removeEventListener('message', testerInputManager);
-        document.getElementById("promptfream").remove();
-    }
+    window.removeEventListener('message', testerInputManager);
     ifream = freamCaller(window.IronIde.getValue());
     testerInputManager = function (e) {
         switch (e.data.action) {
@@ -77,6 +64,9 @@ function exameeDoTask(){
 
 function freamCaller(script){
     var elem = document.getElementById("prompt");
+    var curtain = document.createElement('iframe');
+    curtain.classList.add("curtain");
+    elem.appendChild(curtain);
     var iframe = document.createElement('iframe');
     iframe.id = "promptfream";
     iframe.src = document.location.origin + "/console.html"
@@ -84,7 +74,6 @@ function freamCaller(script){
     iframe.style.height = "calc(300px - 2rem)";
     iframe.style.position = "absolute";
     iframe.style.bottom = "0";
-    iframe.classList.add("curtain");
     var result = elem.appendChild(iframe);
     elem.classList.remove("hide");
     window.addEventListener('message', function (e) {

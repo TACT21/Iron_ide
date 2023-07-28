@@ -1,11 +1,5 @@
 var inputs = [];
-var answer
 function Compere(){
-    if(localStorageRead("result")){
-        answer = localStorageRead("result");
-        exameeDoTask();
-        return;
-    }
     const ConsoleWrap = document.getElementById("prompt");
     if(!(ConsoleWrap)){
         alert("実行環境展開場所が存在しません。再読み込みしてください。")
@@ -46,10 +40,8 @@ function Compere(){
 }
 
 function exameeDoTask(){
-    if(testerInputManager){
-        window.removeEventListener('message', testerInputManager);
-        document.getElementById("promptfream").remove();
-    }
+    window.removeEventListener('message', testerInputManager);
+    document.getElementById("promptfream").remove();
     ifream = freamCaller(window.IronIde.getValue());
     testerInputManager = function (e) {
         switch (e.data.action) {
