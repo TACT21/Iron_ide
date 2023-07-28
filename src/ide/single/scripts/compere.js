@@ -11,7 +11,7 @@ function Compere(){
         alert("実行環境展開場所が存在しません。再読み込みしてください。")
         return;
     }
-    Array.prototype.forEach.call(selects, function(item) {
+    Array.prototype.forEach.call(ConsoleWrap.getElementsByTagName("ifream"), function(item) {
         item.remove();
     });
     document.getElementById("EngineStoper").classList.add("hide");
