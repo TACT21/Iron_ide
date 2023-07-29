@@ -1,5 +1,6 @@
 var inputs = [];
 var answer
+
 function Compere(){
     if(localStorageRead("result")){
         answer = localStorageRead("result");
