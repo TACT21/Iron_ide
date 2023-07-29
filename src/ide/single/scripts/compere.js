@@ -75,6 +75,8 @@ function exameeDoTask(){
     window.addEventListener('message', testerInputManager);
 }
 
+var s = "";
+
 function freamCaller(script){
     var elem = document.getElementById("prompt");
     var iframe = document.createElement('iframe');
@@ -87,13 +89,14 @@ function freamCaller(script){
     iframe.classList.add("curtain");
     var result = elem.appendChild(iframe);
     elem.classList.remove("hide");
+    s = script;
     window.addEventListener('message', function (e) {
         switch (e.data.action) {
             case 'ReqScript':
                 console.log("post script")
                 iframe.contentWindow.postMessage({
                     action: 'GiveScript',
-                    message: script
+                    message: s
                 }, '*',);
             case "ConsoleWrite":
                 console.log(e.message)
