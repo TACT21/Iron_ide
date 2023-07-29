@@ -96,7 +96,7 @@ function freamCaller(script){
                 console.log("post script")
                 iframe.contentWindow.postMessage({
                     action: 'GiveScript',
-                    message: s
+                    message: window.IronIde.getValue()
                 }, '*',);
             case "ConsoleWrite":
                 console.log(e.message)
