@@ -15,6 +15,7 @@ namespace IronIde.Components
 {
     public class Engine
     {
+        private readonly string utilityName = "CelestriumUtility";
         EngineSettings settings = null!;
         LinkedList<(string,object)> Variables = new LinkedList<(string,object)> ();
         public Engine(EngineSettings engineSettings) {
@@ -40,7 +41,27 @@ namespace IronIde.Components
             //通例名,クラス名のセット
             Dictionary<string,string> importAim = new();  
             Console.WriteLine($"Create script @ thread #{Thread.CurrentThread.ManagedThreadId}");
+<<<<<<< Updated upstream
             var scriptMaker = Replacer(script, this.settings.EventName);
+=======
+            //スクリプト成形
+            foreach (var item in settings.EventName)
+            {
+                
+                Regex rx = new Regex(item + @"\s*\x28.*\x29",
+                  RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                var strings = rx.Matches(script);
+                foreach (Match aim in strings)
+                {
+                    script = 
+                        script.Replace(aim.Value, $"{utilityName}.DoTask(\"{ item}\",{aim.Value.Replace(item, "").Replace("(", "[").Replace(")", "]")})")//配列化
+                        .Replace(",[]","");//空配列回避
+                }
+            }
+            Console.WriteLine($"===script===");
+            Console.WriteLine(script);
+            Console.WriteLine($"===script===");
+>>>>>>> Stashed changes
             Console.WriteLine($"Create runtime @ thread #{Thread.CurrentThread.ManagedThreadId}");
             //エンジン 作成
             Microsoft.Scripting.Hosting.ScriptEngine scriptEngine;
@@ -62,17 +83,17 @@ namespace IronIde.Components
             scriptSource = scriptEngine.CreateScriptSourceFromString(await scriptMaker);
             Console.WriteLine($"Check the rely system @ thread #{Thread.CurrentThread.ManagedThreadId}");
             var utility = new IronUtility();
-            utility.DoTask("print", new object[] { "IronPythonIDE with Dynamic Language Runtime" });
-            scriptScope.SetVariable("IronPythonUtility", utility);
+            utility.DoTask("print", new object[] { "Steel Environment VER.0.0.2" });
+            scriptScope.SetVariable(utilityName, utility);
             Console.WriteLine($"Ignition @ thread #{Thread.CurrentThread.ManagedThreadId}");
             try
             {
                 scriptSource.Execute(scriptScope);
             }catch (Exception ex) {
                 Console.Error.WriteLine(ex.Message, "\n@", ex.Source, "\n===StackTrace===\n", ex.StackTrace);
-                utility.DoTask("print", new object[] { "<p style = \"color:#ef857d\">", ex.Message,"</p>"});
+                utility.DoTask("Error", new object[] {ex.Message});
             }
-            utility.DoTask("print", new object[] { "<p style = \"color:#7df0a3\">", "All Tasks is Compreate.", "</p>" });
+            utility.DoTask("print", new object[] { "<p style = \"color:#7df0a3\">", "All Tasks is completed.", "</p>" });
             //後始末
             if (Recycle)
             {
