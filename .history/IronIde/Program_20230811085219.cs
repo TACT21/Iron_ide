@@ -24,8 +24,7 @@ public partial class MyClass
     internal static partial string GetHRef();
 
     /// <summary>
-    /// 実行環境初期化エージェント
-    /// Main.jsから呼ばれる
+    /// IronPython �� web assembly ��œ��������߂̃Z�b�g�B
     /// </summary>
     [JSExport]
     internal static async Task Ignition()

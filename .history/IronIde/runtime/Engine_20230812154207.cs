@@ -9,7 +9,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace IronIde.Components
 {
@@ -24,7 +23,8 @@ namespace IronIde.Components
         {
             this.settings = new EngineSettings();
         }
-        public async Task Ignition(object? script,string assembliesOrder ="")
+
+        public void Ignition(object? script,string assembliesOrder = String.Empty)
         {
             if(script != null) {
                 Ignition(((string)script),assembliesOrder);
@@ -35,12 +35,35 @@ namespace IronIde.Components
             }
         }
 
-        public async Task Ignition(string script, string assembliesOrder = "", bool Recycle = false)
+        public void Ignition(string script, string assembliesOrder = String.Empty, bool Recycle = false)
         {
             //通例名,クラス名のセット
             Dictionary<string,string> importAim = new();  
             Console.WriteLine($"Create script @ thread #{Thread.CurrentThread.ManagedThreadId}");
-            var scriptMaker = Replacer(script, this.settings.EventName);
+            //import文取得
+            Regex rx = new Regex(@"import\s*.*\s*as.*",
+                  RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var strings = rx.Matches(script);
+            foreach (Match aim in strings)
+            {
+                var value = aim.value.Replace("import","").spirit("as");
+                importAim.Add(value[1].Trim(),value[0].Trim());
+                script = script.Replace(aim.value,"");
+            }
+            rx = new Regex(@"import\s*.*",
+                  RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var strings = rx.Matches(script);
+            foreach (Match aim in strings)
+            {
+                var value = aim.value.Replace("import","");
+                importAim.Add(value[1].Trim(),value[0].Trim());
+                script = script.Replace(aim.value,"");
+            }
+            //スクリプト成形
+            foreach (var item in settings.EventName)
+            {
+                
+            }
             Console.WriteLine($"Create runtime @ thread #{Thread.CurrentThread.ManagedThreadId}");
             //エンジン 作成
             Microsoft.Scripting.Hosting.ScriptEngine scriptEngine;
@@ -59,7 +82,7 @@ namespace IronIde.Components
             Console.WriteLine($"Create scope @ thread #{Thread.CurrentThread.ManagedThreadId}");
             scriptScope = scriptEngine.CreateScope();
             Console.WriteLine($"Create source @ thread #{Thread.CurrentThread.ManagedThreadId}");
-            scriptSource = scriptEngine.CreateScriptSourceFromString(await scriptMaker);
+            scriptSource = scriptEngine.CreateScriptSourceFromString(script);
             Console.WriteLine($"Check the rely system @ thread #{Thread.CurrentThread.ManagedThreadId}");
             var utility = new IronUtility();
             utility.DoTask("print", new object[] { "IronPythonIDE with Dynamic Language Runtime" });
@@ -83,61 +106,16 @@ namespace IronIde.Components
                 }
             }
         }
-        private async Task<string> Replacer(string script, LinkedList<string> funcs){
-            //import文取得
-            Regex rx = new Regex(@"import\s*.*\s*as.*",
+        private void Replacer(string script, string aim){
+            Regex rx = new Regex(item + @"\s*\x28.*\x29",
                   RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var strings = rx.Matches(script);
+                var strings = rx.Matches(script);
             foreach (Match aim in strings)
             {
-                var value = aim.Value.Replace("import", "").Split("as");
-                Regex regex = new Regex(value[0].Trim() + @"\s*.*\x28.*\x29",
-                 RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var targets = regex.Matches(script);
-                foreach (Match target in targets)
-                {
-                    script = script.replace(
-                        target.Value, 
-                        $"IronPythonUtility.DoTask(Wasm,[" +
-                        $"{target.Value.Replace(value[0].Trim(), "").split("(")[0]}," +
-                        $"{target.Value.Replace(value[0].Trim(), "").split("(")[1].ToString().Replace(")", "]")})");
-                }
-                script = script.Replace(aim.Value, "");
+                script = 
+                    script.Replace(aim.Value, "IronPythonUtility.DoTask(\"" + item + "\"," + aim.Value.Replace(item, "").Replace("(", "[").Replace(")", "]") + ")")//配列化
+                    .Replace(",[]","");//空配列回避
             }
-            rx = new Regex(@"import\s*.*",
-                  RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            strings = rx.Matches(script);
-            foreach (Match aim in strings)
-            {
-                var value = aim.Value.Replace("import", "").Split("as");
-                Regex regex = new Regex(value[0].Trim() + @"\s*.*\x28.*\x29",
-                 RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var targets = regex.Matches(script);
-                foreach (Match target in targets)
-                {
-                    script = script.replace(
-                        target.Value,
-                        $"IronPythonUtility.DoTask(Wasm,[" +
-                        $"{target.Value.Replace(value[0].Trim(), "").split("(")[0]}," +
-                        $"{target.Value.Replace(value[0].Trim(), "").split("(")[1].ToString().Replace(")", "]")})");
-                }
-                script = script.Replace(aim.Value, "");
-            }
-            //スクリプト成形
-            foreach (var item in funcs)
-            {
-                rx = new Regex(item + @"\s*\x28.*\x29",
-                  RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                var matchCollection = rx.Matches(script);
-                foreach (Match aim in matchCollection)
-                {
-                    script = script.Replace(
-                            aim.Value,
-                            $"IronPythonUtility.DoTask(\"{item}\",{aim.Value.Replace(item, "").Replace("(", "[").Replace(")", "]")})")//配列化
-                        .Replace(",[]", "");//空配列回避
-                }
-            }
-            return script;
         }
     }
 
@@ -175,7 +153,8 @@ namespace IronIde.Components
             Owner,
             Neither
         }
-    }    
+    }
+    
     /// <summary>
     /// 実行オーダー格納用クラス
     /// </summary>
@@ -189,6 +168,7 @@ namespace IronIde.Components
         /// </summary>
         public object[] args { set; get; } = null;
     }
+
     /// <summary>
     /// 結果格納用クラス
     /// </summary>
@@ -229,6 +209,7 @@ namespace IronIde.Components
             return JsonSerializer.Deserialize(resultJson, Type.GetType(type));
         }
     }
+
     public class IronUtility
     {
         public uint waitingSec = 0;
