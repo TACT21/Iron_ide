@@ -78,6 +78,8 @@ document.getElementById('input').style.display = "none";
 
 await DotNetRun(limit)
 
+console.log("done");
+
 async function DotNetRun(token){
     if(token > 0){
         await dotnet.run().catch(async ()=> {console.error(e); await DotNetRun(token - 1)}) 
@@ -123,3 +125,7 @@ function sleep(milliSeconds) {
         setTimeout(() => resolve(), milliSeconds);
     });
 }
+
+addEventListener("unhandledrejection", (event) => {
+    location.href = "./"
+});
