@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+import { error } from 'console';
 import { dotnet } from './dotnet.js'
 
 var script = "";
@@ -76,21 +77,13 @@ exports.MyClass.Ignition();
 //document.getElementById('out').innerHTML = text;
 document.getElementById('input').style.display = "none";
 
-var success = true;
+await DotNetRun(limit)
 
-for (let index = 0; index < limit; index++) {
-    try {
-        await dotnet.run();
-    } catch (e) {
-        success = false
-        if(index == (limit - 1)){
-            console.error(e);
-            throw e;
-        }
-    } finally{
-        if(success){
-            break;
-        }
+async function DotNetRun(token){
+    if(token > 0){
+        await dotnet.run().catch(async ()=> {console.error(e); await DotNetRun(token - 1)}) 
+    }else{
+        return null;
     }
 }
 
