@@ -6,6 +6,7 @@ import { dotnet } from './dotnet.js'
 var script = "";
 var receve = false;
 var test = false;
+const limit = 5;
 
 window.addEventListener('message', function (e) {
     switch (e.data.action) {
@@ -75,11 +76,23 @@ exports.MyClass.Ignition();
 //document.getElementById('out').innerHTML = text;
 document.getElementById('input').style.display = "none";
 
-function Run() {
-    exports.MyClass.Ignition();
-}
+var success = true;
 
-await dotnet.run();
+for (let index = 0; index < limit; index++) {
+    try {
+        await dotnet.run();
+    } catch (e) {
+        success = false
+        if(index == (limit - 1)){
+            console.error(e);
+            throw e;
+        }
+    } finally{
+        if(success){
+            break;
+        }
+    }
+}
 
 function GetInput() {
     var result = document.getElementById('input_result').innerText;
