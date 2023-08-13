@@ -127,5 +127,17 @@ function sleep(milliSeconds) {
 }
 
 addEventListener("unhandledrejection", (event) => {
-    location.href = "./"
+    console.log(event.reason.message);
+    var criterion = "Uncaught TypeError: Failed to execute 'decode' on 'TextDecoder': The provided ArrayBufferView value must not be shared.";
+    if(event.reason.message.indexOf(criterion) != -1){
+        location.reload();
+    }
+});
+
+addEventListener("error", (event) => {
+    console.log(event.message);
+    var criterion = "Uncaught TypeError: Failed to execute 'decode' on 'TextDecoder': The provided ArrayBufferView value must not be shared.";
+    if(event.message.indexOf(criterion) != -1){
+        location.reload();
+    }
 });
