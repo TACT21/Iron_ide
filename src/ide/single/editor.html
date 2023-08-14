@@ -26,6 +26,14 @@
         function Hide(){
             document.getElementById("SaveList").classList.add("hide")
         }
+        var elements = document.getElementById("cmd_pallet").children;
+        for (let index = 0; index < elements.length; index++) {
+            elements[index].addEventListener("mouseover",function(event)
+            {
+                
+            })
+            
+        }
     </script>
     <link rel="stylesheet" href="../shered/styles/file_piker.css" />
     <link rel="stylesheet" href="../shered/styles/gernal.css" />
@@ -49,19 +57,22 @@
                     <input type="button" class="comand_pallet item" id="fileZipperInput" onclick="fileZipper()">
                     <input type="button" class="comand_pallet item" id="saveShow" onclick="Show()">
                 </div>
-                <div class="comand_pallet warp">
-                    <label class="comand_pallet item" for="userfile"><img src="../img/3.jpg" alt="Upload" /></label>
-                    <label class="comand_pallet item" for="newFileSaverInput"><img src="../img/5.jpg" alt="New File" /></label>
-                    <label class="comand_pallet item" for="projFileLoadHelperInput"><img src="../img/4.jpg" alt="Load File" /></label>
+                <div class="comand_pallet warp" id="cmd_pallet">
+                    <label class="comand_pallet item" onHover="pythonファイルをアップロード" for="userfile"><img src="../img/3.jpg" alt="Upload" /></label>
+                    <label class="comand_pallet item" onHover="新規ファイル" for="newFileSaverInput"><img src="../img/5.jpg" alt="New File" /></label>
+                    <label class="comand_pallet item" onHover="Ironprjファイル(Json形式)をアップロード" for="projFileLoadHelperInput"><img src="../img/4.jpg" alt="Load File" /></label>
                     <label class="comand_pallet item" for="saveShow">保存</label>
                 </div>
                 <div class="comand_pallet overlay"></div>
                 <div id="FileList" class="files list warp">
                 </div>
                 <div id="SaveList" class="files list warp hide" style="z-index: 100; position: absolute; top:0;background-color: #fffffe;">
-                    <p>保存</p>
-                    <label class="comand_pallet item" for="fileZipperInput"><img src="../img/1.jpg" alt="Download File" />ZIP形式でエクスポート</label>
-                    <label class="comand_pallet item" for="projFileSaverInput"><img src="../img/2.jpg" alt="Save File" />ﾌﾟﾛｼﾞｪｸﾄファイルをダウンロード</label>
+                    <div class="comand_pallet warp">
+                        <p style="display: inline-block;">保存方法の選択</p>
+                        <button onclick="Hide()">やめる</button>
+                    </div>
+                    <label class="comand_pallet item" for="fileZipperInput"><img style="margin: auto; display: inline-block;"  src="../img/1.jpg" alt="Download File" /><p style="margin: auto; display: inline-block;" >ZIP形式</p></label>
+                    <label class="comand_pallet item" for="projFileSaverInput"><img src="../img/2.jpg"  style="margin: auto; display: inline-block;" alt="Save File" /><p  style="margin: auto; display: inline-block;">json形式</p></label>
                 </div>
                 <div id="error" class="files error overlay hide">
                     <div>

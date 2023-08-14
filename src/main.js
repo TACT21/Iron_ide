@@ -126,6 +126,16 @@ function sleep(milliSeconds) {
     });
 }
 
+async function doWasm (ImportFrom,funcName,argArray){
+    var a = await fetch(ImportFrom)
+        .then((response) => response.arrayBuffer())
+        .then((bytes) => WebAssembly.instantiate(bytes, importObject))
+        .then((results) => {
+            return results.instance.exports[funcName].apply(null,argArray);
+        });
+    return a;
+}
+
 addEventListener("unhandledrejection", (event) => {
     console.log(event.reason.message);
     var criterion = "Uncaught TypeError: Failed to execute 'decode' on 'TextDecoder': The provided ArrayBufferView value must not be shared.";
