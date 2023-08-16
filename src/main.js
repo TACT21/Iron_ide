@@ -6,6 +6,7 @@ import { dotnet } from './dotnet.js'
 var script = "";
 var receve = false;
 var test = false;
+const limit = 5;
 
 window.addEventListener('message', function (e) {
     switch (e.data.action) {
@@ -75,11 +76,17 @@ exports.MyClass.Ignition();
 //document.getElementById('out').innerHTML = text;
 document.getElementById('input').style.display = "none";
 
-function Run() {
-    exports.MyClass.Ignition();
-}
+await DotNetRun(limit)
 
-await dotnet.run();
+console.log("done");
+
+async function DotNetRun(token){
+    if(token > 0){
+        await dotnet.run().catch(async ()=> {console.error(e); await DotNetRun(token - 1)}) 
+    }else{
+        return null;
+    }
+}
 
 function GetInput() {
     var result = document.getElementById('input_result').innerText;
@@ -118,3 +125,19 @@ function sleep(milliSeconds) {
         setTimeout(() => resolve(), milliSeconds);
     });
 }
+
+addEventListener("unhandledrejection", (event) => {
+    console.log(event.reason.message);
+    var criterion = "Uncaught TypeError: Failed to execute 'decode' on 'TextDecoder': The provided ArrayBufferView value must not be shared.";
+    if(event.reason.message.indexOf(criterion) != -1){
+        location.reload();
+    }
+});
+
+addEventListener("error", (event) => {
+    console.log(event.message);
+    var criterion = "Uncaught TypeError: Failed to execute 'decode' on 'TextDecoder': The provided ArrayBufferView value must not be shared.";
+    if(event.message.indexOf(criterion) != -1){
+        location.reload();
+    }
+});
