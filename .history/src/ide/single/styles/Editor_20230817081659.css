@@ -96,14 +96,3 @@
     grid-column: 2 / 3;
     grid-row: 2 / 3;
 }
-
-.prompt{
-    background-color: var(--base-color);
-    color: var(--font-color);
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
-}
-
-.prompt > button{
-    margin-left: 1rem;
-}
