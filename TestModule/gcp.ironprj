@@ -1,5 +1,5 @@
 [
     {"name":"file01.py","content":"print(\"gcp\")"},
-    {"name":"fife02.py","content":"i = input()\nT = i..split(\",\")\n\nfor i in range(len(T)-1,0,-1):\n    tmp = T[0]\n    for j in range(1,i+1):\n        if tmp < T[j]:\n            tmp , T[j] = T[j], tmp\n            T[j-1]=T[j]\n        T[i] = tmp\n        print(T)"},
+    {"name":"fife02.py","content":"i = input()\nT = [(int(data)) for data in i.split(\",\")]\n\nfor i in range(len(T)-1):\n    for j in range(0, len(T)-1-i):\n        if T[j] > T[j+1]:\n            T[j], T[j+1] = T[j+1], T[j]\n    print(T)"},
     {"name":"result","content":"gcp"}    
 ]
