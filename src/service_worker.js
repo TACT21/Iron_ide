@@ -1,6 +1,6 @@
-﻿var cacheName = 'IronIde 0.0.4';
+﻿var cacheName = 'Celestrium Ide 0.1.1';
 // キャッシュファイルの指定
-var CACHE_NAME = 'IronIde';
+var CACHE_NAME = 'CelestriumIde';
 var urlsToCache = [
     "/.stamp",
     "/Console.css",

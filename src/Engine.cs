@@ -76,7 +76,7 @@ namespace IronIde.Components
             scriptSource = scriptEngine.CreateScriptSourceFromString(script);
             Console.WriteLine($"Check the rely system @ thread #{Thread.CurrentThread.ManagedThreadId}");
             var utility = new IronUtility();
-            utility.DoTask("print", new object[] { "IronPythonIDE with Dynamic Language Runtime" });
+            utility.DoTask("print", new object[] { "Celestrium Python IDE with Dynamic Language Runtime" });
             scriptScope.SetVariable("IronPythonUtility", utility);
             Console.WriteLine($"Ignition @ thread #{Thread.CurrentThread.ManagedThreadId}");
             try
