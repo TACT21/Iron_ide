@@ -69,7 +69,7 @@ setModuleImports('main.js', {
 
 const config = getConfig();
 const exports = await getAssemblyExports(config.mainAssemblyName);
-const text = exports.MyClass.Greeting();
+var text = exports.MyClass.Greeting();
 console.log(text);
 exports.MyClass.Ignition();
 
@@ -77,6 +77,8 @@ exports.MyClass.Ignition();
 document.getElementById('input').style.display = "none";
 
 await DotNetRun(limit)
+text = exports.MyClass.Greeting();
+console.log(text);
 
 console.log("done");
 
